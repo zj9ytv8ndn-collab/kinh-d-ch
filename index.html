@@ -3317,7 +3317,7 @@ var XICI_SEL=[
 
 var HK_XSTAR={1:{n:'一白貪狼',el:'Thủy',luck:'Cát',desc:'Danh tiếng, quan lộc, duyên tình — tinh của văn danh và hậu vận.'},2:{n:'二黑巨門',el:'Thổ',luck:'Hung',desc:'Bệnh tật, âu lo, tai ương — Hắc Sát, cần hóa giải bằng kim khí.'},3:{n:'三碧祿存',el:'Mộc',luck:'Hung',desc:'Tranh cãi, thị phi, kiện tụng — hóa giải bằng Hỏa (đèn đỏ).'},4:{n:'四綠文曲',el:'Mộc',luck:'Cát',desc:'Học hành, khoa cử, văn chương — Văn Xương vận.'},5:{n:'五黃廉貞',el:'Thổ',luck:'Đại hung',desc:'Ngũ Hoàng Sát — tai nạn, bệnh nặng, tuyệt đối không động thổ.'},6:{n:'六白武曲',el:'Kim',luck:'Cát',desc:'Quyền lực, võ nghiệp, hậu thuẫn quý nhân — Vũ Khúc vận.'},7:{n:'七赤破軍',el:'Kim',luck:'Hung',desc:'Kiếm vận, thị phi, mất trộm — hóa giải bằng Thủy.'},8:{n:'八白左輔',el:'Thổ',luck:'Đại cát',desc:'Tài lộc, điền sản, phúc đức — Tài tinh mạnh nhất hạ nguyên.'},9:{n:'九紫右弼',el:'Hỏa',luck:'Đại cát',desc:'Hỷ sự, danh vọng, văn minh — Đương vận Chiêm tinh 2024–2043.'}};
 var HK_PAL=[4,9,2,3,5,7,8,1,6]; // grid order SE S SW / E C W / NE N NW
-var HK_DIR={1:'Bắc',2:'Tây Nam',3:'Đông',4:'Đông Nam',5:'Trung Cung',6:'Tây Bắc',7:'Tây',8:'Đông Bắc',9:'Nam'};
+var HK_DIR={1:['B','Bắc','Thủy'],2:['TN','Tây Nam','Thổ'],3:['Đ','Đông','Mộc'],4:['ĐN','Đông Nam','Mộc'],5:['T','Trung Cung','Thổ'],6:['TB','Tây Bắc','Kim'],7:['T','Tây','Kim'],8:['ĐB','Đông Bắc','Thổ'],9:['N','Nam','Hỏa']};
 var HK_QUAI={1:'Khảm',2:'Khôn',3:'Chấn',4:'Tốn',5:'Trung',6:'Càn',7:'Đoài',8:'Cấn',9:'Ly'};
 var HK_PEL={1:'Thủy',2:'Thổ',3:'Mộc',4:'Mộc',5:'Thổ',6:'Kim',7:'Kim',8:'Thổ',9:'Hỏa'};
 var HK_HOA={2:'Đồng lục / vật kim loại (chuông đồng)',3:'Đèn đỏ, nến (dùng Hỏa)',5:'Đồng lục lục nghiêm + tránh động thổ, màu vàng gạch',7:'Nước sạch, bể cá nhỏ (dùng Thủy)'};
@@ -3333,7 +3333,9 @@ function hkDayStar(y,m,d){var half=hkSolsticeHalf(y,m,d);var cc=dayCanChi(d,m,y)
  if(half==='winter')return (di%9)+1;
  return 9-(di%9)===9?9:((9-((di)%9))===0?9:(9-(di%9)));}
 function hkHourStar(y,m,d,hIdx){var ds=hkDayStar(y,m,d);var half=hkSolsticeHalf(y,m,d);var st=half==='winter'?(((ds-1+hIdx)%9)+9)%9+1:(((ds-1-hIdx)%9)+9)%9+1;return st;}
-function hkChart(center,mode){var out=[];for(var i=0;i<9;i++){var palace=HK_PAL[i];var star=mode==='fwd'?(((center-1+i)%9)+1):(((center-1-i)%9)+9)%9+1;out.push({palace:palace,star:star});}return out;}
+function hkChart(center,mode){var FLIGHT=[5,6,7,8,9,1,2,3,4];var byPal={};
+ for(var k=0;k<9;k++){var s=mode==='fwd'?(((center-1+k)%9)+1):(((center-1-k)%9)+9)%9+1;byPal[FLIGHT[k]]=s;}
+ var out=[];for(var i=0;i<9;i++){var palace=HK_PAL[i];out.push({palace:palace,star:byPal[palace]});}return out;}
 
 function hkBanVanBlock(){
  try{
@@ -3402,10 +3404,11 @@ function hkRender(el,y,m,d,hIdx){var _half=hkSolsticeHalf(y,m,d);var ys=hkYearSt
  h+='<p style="line-height:1.7;font-size:13px;opacity:.8">Cung 5 (Trung cung) là nơi nhập trung của niên tinh — mệnh danh “Thái Tuế hạ toàn”, dù sao hung cũng nên giữ yên, đặt vật trấn trạch (lục đế tiền, ngọc) hơn là kích hoạt.</p>';
  h+='<p style="font-size:13px;margin-top:8px">Tam Nguyên Cửu Vận: hiện tại <b style="color:#e8c766">'+pd+' Vận ('+hkPeriodYears(pd)+')</b> — hạ nguyên, quái '+pd+' nhập trung. Cửu Tử (9 Hỏa) đương vận 2024–2043.</p>';
  h+=hkBanVanBlock();
+ if(el)el.innerHTML=h;
  return h;}
 function hkCungDetail(idx){var cells=window.__hkChart||[];var c=cells[idx];if(!c)return;var st=HK_XSTAR[c.star];var r=window.__hkRel(st.el,c.palace);
  var isCat=st.luck.indexOf('cát')>-1||st.luck==='Cát';
- var use=isCat?'Phương '+HK_DIR[c.palace][0]+' năm nay đắc vượng khí: nên kích hoạt — đặt bàn làm việc, giường ngủ, cửa chính hướng về đây; làm việc lớn, ký kết, di chuyển dài ngày đều lợi.':'Phương '+HK_DIR[c.palace]+' năm nay suy khí: nên tĩnh — tránh động thổ, khoan đục, sửa chữa lớn; nếu phải dùng phương này, đặt vật hóa giải và hạn chế ở lâu.';
+ var use=isCat?'Phương '+HK_DIR[c.palace][0]+' năm nay đắc vượng khí: nên kích hoạt — đặt bàn làm việc, giường ngủ, cửa chính hướng về đây; làm việc lớn, ký kết, di chuyển dài ngày đều lợi.':'Phương '+HK_DIR[c.palace][1]+' năm nay suy khí: nên tĩnh — tránh động thổ, khoan đục, sửa chữa lớn; nếu phải dùng phương này, đặt vật hóa giải và hạn chế ở lâu.';
  var h='<h3>Cung '+HK_DIR[c.palace][0]+' ('+HK_QUAI[c.palace]+' · ngũ hành '+HK_PEL[c.palace]+') — Tinh '+c.star+' '+st.n+'</h3>';
  h+='<p><b>Hạng:</b> <span style="color:'+(isCat?'#4ade80':'#ef4444')+'">'+st.luck+'</span> · <b>Ngũ hành tinh:</b> '+st.el+' · <b>Quan hệ cung–tinh:</b> <span style="color:'+r[2]+'">'+r[0]+'</span> — '+r[1]+'.</p>';
  h+='<p><b>Ý nghĩa tinh:</b> '+st.desc+'</p>';
@@ -5983,7 +5986,8 @@ function lienMonHTML(cast,res){
  var up=numFromYang(yang).up,lo=numFromYang(yang).lo;
  var haoNap=NAPGIAP[lo].i.concat(NAPGIAP[up].o);
  var dungElD=null,dungChi=null;
- if(dt.lt){for(var i=0;i<6;i++){var chi=haoNap[i].split(' ')[1];
+ if(dt.lt==='Thế hào'){var tuB=theUng(p.stage),chiB=haoNap[tuB.the-1].split(' ')[1];dungElD=CHI_EL[chiB];dungChi=chiB;}
+ else if(dt.lt){for(var i=0;i<6;i++){var chi=haoNap[i].split(' ')[1];
  if(lucThan(cungEl,CHI_EL[chi])===dt.lt){dungElD=CHI_EL[chi];dungChi=chi;break;}}}
  var dichTxt=dungElD?('dụng thần '+dt.lt+' hành '+dungElD+' tại '+dungChi):'tổng quan — luận theo Thế Ứng';
  var now=new Date();
@@ -6916,6 +6920,9 @@ var NAPGIAP={
  7:{i:['Ất Mùi','Ất Tỵ','Ất Mão'],o:['Quý Sửu','Quý Hợi','Quý Dậu']}
 };
 var CHI_EL={'Tý':'Thủy','Sửu':'Thổ','Dần':'Mộc','Mão':'Mộc','Thìn':'Thổ','Tỵ':'Hỏa','Ngọ':'Hỏa','Mùi':'Thổ','Thân':'Kim','Dậu':'Kim','Tuất':'Thổ','Hợi':'Thủy'};
+var TIEN_THAN={'Hợi':'Tý','Dần':'Mão','Tỵ':'Ngọ','Thân':'Dậu','Sửu':'Thìn','Thìn':'Mùi','Mùi':'Tuất','Tuất':'Sửu'};
+var THOAI_THAN={'Tý':'Hợi','Mão':'Dần','Ngọ':'Tỵ','Dậu':'Thân','Thìn':'Sửu','Mùi':'Thìn','Tuất':'Mùi','Sửu':'Tuất'};
+function phanLoaiPhucPhan(chi0,chi1,mv){var r={fu:0,fan:0,fuN:0,fuW:0,fanN:0,fanW:0,dongN:0,dongW:0,doiQue:true};for(var c2=0;c2<6;c2++){var ci0=CHI_ID[chi0[c2]],ci1=CHI_ID[chi1[c2]];if(ci0===ci1){r.fu++;if(c2<3)r.fuN++;else r.fuW++;}else if((ci0+6)%12===ci1){r.fan++;if(c2<3)r.fanN++;else r.fanW++;}if(mv&&!mv[c2])r.doiQue=false;if(mv&&mv[c2]){if(c2<3)r.dongN++;else r.dongW++;}}return r;}
 var SINH={'Mộc':'Hỏa','Hỏa':'Thổ','Thổ':'Kim','Kim':'Thủy','Thủy':'Mộc'};
 var KHAC={'Mộc':'Thổ','Thổ':'Thủy','Thủy':'Hỏa','Hỏa':'Kim','Kim':'Mộc'};
 function lucThan(cungEl,lineEl){
@@ -6941,7 +6948,7 @@ function dungThanByDom(dom,gioiTinh){
  if(gt==='nam')return{lt:'Thê Tài',note:'Nam hỏi tình duyên — dụng thần là Thê Tài (người yêu, vợ, bạn đời nữ)'};
  return{lt:'Thê Tài',note:'Dụng thần tình duyên: nam xem Thê Tài (người yêu, vợ), nữ xem Quan Quỷ (người yêu, chồng) — chọn giới tính ở dưới để luận chuẩn hơn'};
  }
- if(dom==='sức khỏe'||dom==='Sức khỏe')return{lt:'Tử Tôn',note:'Dụng thần sức khỏe là Tử Tôn (thuốc men, niềm vui, tiêu tai giải nạn); Phụ Mẫu thịnh áp chế thì bệnh kéo dài'};
+ if(dom==='sức khỏe'||dom==='Sức khỏe')return{lt:'Thế hào',note:'Tự hỏi sức khỏe — cổ pháp lấy THẾ HÀO làm dụng thần (bản mệnh người hỏi): Thế vượng, được nguyệt nhật sinh phù thì bệnh dễ lành; Thế suy, lâm không phá hoặc bị khắc thì bệnh nặng kéo dài. Tử Tôn chỉ là phúc thần (thuốc men, lương y) trợ trị, Quan Quỷ là tật bệnh. Hỏi bệnh cho người khác thì lấy lục thân tương ứng làm dụng: cha mẹ→Phụ Mẫu, con cái→Tử Tôn, chồng→Quan Quỷ, vợ→Thê Tài, anh chị em→Huynh Đệ'};
  return{lt:null,note:'Hỏi tổng quan: lấy THẾ hào làm thân mình, ỨNG hào làm đối phương hoàn cảnh mà luận sinh khắc'};
 }
 var KM_MONTH_OVERRIDE=null;
@@ -6969,7 +6976,7 @@ function bocThanhBlock(num,yang,mv,dom){
  var lt=lucThan(cungEl,el);
  var thu=THU6[(thu0+i)%6];
  var isThe=(i+1===tu.the),isUng=(i+1===tu.ung),isMv=(mv&&mv[i]);
- var isDung=(dt.lt&&lt===dt.lt);
+ var isDung=(dt.lt==='Thế hào')?isThe:(dt.lt&&lt===dt.lt);
  if(isDung&&dungIdx<0)dungIdx=i;
  haoData.push({i:i,ng:ng,chi:chi,el:el,lt:lt,thu:thu,isThe:isThe,isUng:isUng,isMv:isMv,isDung:isDung});
  }
@@ -7009,12 +7016,17 @@ function bocThanhBlock(num,yang,mv,dom){
  if(dt.lt&&dungIdx>=0){
  var dd=haoData[dungIdx];
  var sc=0,notes=[];
- if(dd.el===mcEl){sc+=2;notes.push('được nguyệt kiến trợ lực (vượng)');}
- else if(SINH[mcEl]===dd.el){sc+=1;notes.push('được nguyệt kiến sinh');}
- else if(KHAC[mcEl]===dd.el){sc-=2;notes.push('bị nguyệt kiến khắc chế (suy)');}
- if(dd.el===dayEl){sc+=2;notes.push('được nhật thần trợ lực');}
- else if(SINH[dayEl]===dd.el){sc+=1;notes.push('được nhật thần sinh');}
- else if(KHAC[dayEl]===dd.el){sc-=2;notes.push('bị nhật thần khắc');}
+ var vtD=vuongTuong(dd.el,mc);
+ if(vtD==='Vượng'){sc+=2;notes.push('<b>Lâm Nguyệt Kiến</b> — đắc lệnh tháng, khí vượng');}
+ else if(vtD==='Tướng'){sc+=1;notes.push('được <b>Nguyệt Kiến sinh</b> (tướng), khí mạnh');}
+ else if(vtD==='Hưu'){notes.push('hưu khí nơi tháng, lực vừa phải');}
+ else if(vtD==='Tù'){sc-=1;notes.push('bị tháng lệnh <b>cầm tù</b>, lực yếu bị khống chế');}
+ else{sc-=2;notes.push('<b>tử tuyệt</b> nơi tháng lệnh, khí kiệt');}
+ if((mc+6)%12===CHI_ID[dd.chi]){sc-=2;notes.push('phạm <b style="color:#e88a8a">NGUYỆT PHÁ</b> — tháng xung phá, dụng thần thương tổn');}
+ if(dd.el===dayEl){sc+=2;notes.push('<b>Lâm Nhật Thần</b> — được ngày tỷ phù');}
+ else if(SINH[dayEl]===dd.el){sc+=1;notes.push('được <b>Nhật Thần sinh</b>, như trường sinh nơi nhật');}
+ else if(KHAC[dayEl]===dd.el){sc-=2;notes.push('bị <b>Nhật Thần khắc</b>, khí tổn');}
+ if((dc.chi+6)%12===CHI_ID[dd.chi]){if(sc>=2)notes.push('nhật xung mà dụng vượng — tượng <b>ám động</b>, việc ngầm chuyển');else{sc-=1;notes.push('phạm <b style="color:#e88a8a">NHẬT PHÁ</b> — nhật xung mà dụng suy, động mà tán');}}
  if(dd.isMv){notes.push('Dụng thần động — việc đang biến chuyển, sắp có kết quả');sc+=1;}
  if(dd.isThe)notes.push('Dụng thần lâm Thế — việc nằm trong tay mình, dễ nắm bắt');
  var verdict=sc>=3?'<b class="st">Dụng thần VƯỢNG — việc cầu hanh thông, kết quả tốt, ứng nhanh.</b>':sc>=1?'<b>Dụng thần trung bình — việc khả thi nhưng cần nỗ lực và thời gian.</b>':'<b style="color:#e88a8a">Dụng thần SUY — thời chưa tới, nên kiên nhẫn tu dưỡng, chớ mạnh động.</b>';
@@ -7151,11 +7163,15 @@ function bocThanhBlock(num,yang,mv,dom){
  if(LUC_HOP[num]&&LUC_XUNG[num]===undefined&&LUC_XUNG[bNum])deep.push('<b>HỢP BIẾN XUNG</b> — bản quẻ lục hợp mà biến quẻ lục xung: đầu thuận cuối tan, thành trước bại sau; nên thu kết quả sớm, đừng kéo dài câu chuyện.');
  if(LUC_XUNG[num]&&LUC_HOP[bNum])deep.push('<b>XUNG BIẾN HỢP</b> — bản quẻ lục xung mà biến quẻ lục hợp: đầu rối cuối êm, tưởng tan lại thành; giữ vững qua giai đoạn đầu, đừng bỏ giữa chừng.');
  }
- var bChi=haoChiList(bYang),fu=0,fan=0;
- for(var c2=0;c2<6;c2++){var ci0=CHI_ID[chiList[c2]],ci1=CHI_ID[bChi[c2]];
- if(ci0===ci1)fu++;else if((ci0+6)%12===ci1)fan++;}
- if(fu===6)deep.push('<b>PHỤC NGÂM</b> — sáu hào biến mà nạp chi vẫn như cũ: cổ pháp chủ "u sầu rên rỉ", việc dây dưa lặp lại không dứt; cần một cú xung phá mới thoát khỏi vòng luẩn quẩn.');
- else if(fan>=4)deep.push('<b>PHẢN NGÂM</b> — '+fan+'/6 hào biến xung ngược bản hào: cục diện đảo lộn, đau buồn lẫn lộn, sự đi ngược ý muốn; phản ngâm tắc bệt, chỉ nên thủ chớ tiến.');
+ var bChi=haoChiList(bYang),pp=phanLoaiPhucPhan(chiList,bChi,mv);
+ var fu=pp.fu,fan=pp.fan,dongN=pp.dongN,dongW=pp.dongW,fanN=pp.fanN,fanW=pp.fanW,fuN=pp.fuN,fuW=pp.fuW,doiQue=pp.doiQue;
+ if(doiQue)deep.push('<b>QUÁI PHẢN NGÂM (卦反吟)</b> — cả sáu hào đồng loạt biến, biến quẻ là đối quẻ (錯卦) của bản quẻ: cục diện đảo ngược toàn diện, đầu voi đuôi chuột, việc đi ngược lại ý muốn ban đầu; đại kỵ cầu tài, hỏi bệnh, kiện tụng — chỉ nên thủ, không nên tiến.');
+ else if(dongW>0&&fanW===3)deep.push('<b>NGOẠI QUÁI PHẢN NGÂM</b> — ba hào ngoại quái biến mà nạp chi đều xung ngược: biến loạn từ bên ngoài, người khác/hoàn cảnh gây đảo lộn; thân mình chưa động mà thế đã xung, phòng tai biến ập tới.');
+ else if(dongN>0&&fanN===3)deep.push('<b>NỘI QUÁI PHẢN NGÂM</b> — ba hào nội quái biến mà nạp chi đều xung ngược: biến loạn từ bên trong, gia đạo/nội bộ bất an, chính mình tự gây đảo lộn; nên quay về chỉnh đốn gốc rễ.');
+ if(fu===6&&dongN>0&&dongW>0)deep.push('<b>QUÁI PHỤC NGÂM (卦伏吟)</b> — sáu hào biến mà nạp chi vẫn như cũ: cổ pháp chủ "u sầu rên rỉ", việc dây dưa lặp lại không dứt; cần một cú xung phá mới thoát khỏi vòng luẩn quẩn.');
+ else if(dongW>0&&fuW===3)deep.push('<b>NGOẠI QUÁI PHỤC NGÂM</b> — ngoại quái biến (điển hình Càn hóa Chấn) mà nạp chi không đổi: bên ngoài rên rỉ triền miên, người ngoài níu kéo, việc ngoài cửa dây dưa khó dứt.');
+ else if(dongN>0&&fuN===3)deep.push('<b>NỘI QUÁI PHỤC NGÂM</b> — nội quái biến mà nạp chi không đổi: trong nhà/trong lòng u uất không nguôi, nỗi buồn lặp đi lặp lại, thở dài trong dạ.');
+ if(!doiQue&&fan>=4&&!(dongW>0&&fanW===3)&&!(dongN>0&&fanN===3))deep.push('<b>HÀO PHẢN NGÂM</b> — '+fan+'/6 hào biến xung ngược bản hào: cục diện nhiều chỗ đảo lộn, sự đi ngược ý muốn; phản ngâm tắc bệt, chỉ nên thủ chớ tiến.');
  var pool=mv.map(function(x,i){return x?CHI_ID[chiList[i]]:-1;}).filter(function(x){return x>=0;});
  pool.push(dc.chi);
  for(var g2=0;g2<4;g2++){var grp=SAT_TAMHOP[g2];
@@ -7298,7 +7314,11 @@ bocThanhBlock=function(num,yang,mv,dom){
  var c0=CHI_ID[chiList[m2]],c1=CHI_ID[bienChi[m2]];
  var e0=CHI_EL[chiList[m2]],e1=CHI_EL[bienChi[m2]];
  var note='';
- if(e0===e1){note=(c1===(c0+1)%12)?' — <b class="st">HÓA TIẾN THẦN</b>, khí ngày càng thịnh, việc tiến dần tới thành công':' — <b style="color:#e88a8a">HÓA THOÁi THẦN</b>, khí dần lui, việc nên thu liễm dần';}
+ if(e0===e1){
+  if(TIEN_THAN[chiList[m2]]===bienChi[m2])note=' — <b class="st">HÓA TIẾN THẦN</b> ('+chiList[m2]+' tiến lên '+bienChi[m2]+'), khí ngày càng thịnh, việc tiến dần tới thành công';
+  else if(THOAI_THAN[chiList[m2]]===bienChi[m2])note=' — <b style="color:#e88a8a">HÓA THOÁI THẦN</b> ('+chiList[m2]+' thoái về '+bienChi[m2]+'), khí dần lui, việc nên thu liễm dần';
+  else if((c0+6)%12===c1)note=' — <b style="color:#e88a8a">HÓA XUNG</b> ('+chiList[m2]+' xung '+bienChi[m2]+'), động mà tự xung, việc dễ đổi dời, hợp rồi tan';
+ }
  else if(SINH[e1]===e0){note=' — <b class="st">hóa được SINH về</b> (biến hào '+e1+' sinh động hào '+e0+'), có quý nhân nâng đỡ, cát lợi';}
  else if(KHAC[e1]===e0){note=' — <b style="color:#e88a8a">HÓA KHẮC về</b> (biến hào '+e1+' khắc động hào '+e0+'), sau dễ sinh trở ngại, phòng kết cục xấu';}
  else if(SINH[e0]===e1){note=' — động hào sinh biến hào, hơi tổn khí nhưng việc lan tỏa tốt';}
@@ -10024,6 +10044,34 @@ try{
  }}
  T('Tử Vi: quét 360 lá số — 14 chính tinh luôn đủ & không trùng',_tvAll);
 }catch(e){T('Tử Vi: lỗi',false,String(e));}
+try{
+ T('Huyền Không: niên tinh 2026 = 1 Nhất Bạch, 2024 = 3 Tam Bích',hkYearStar(2026)===1&&hkYearStar(2024)===3);
+ T('Huyền Không: nguyệt tinh tháng Dần năm Ngọ 2026 = 8 Bát Bạch',hkMonthStar(2026,1)===8);
+ var _hk1=hkChart(1,'fwd'),_bp={};_hk1.forEach(function(c){_bp[c.palace]=c.star;});
+ T('Huyền Không: Nhất Bạch nhập trung — cung 5 tinh 1, Ngũ Hoàng 5 tại Nam (cung 9), Lục Bạch 6 tại Bắc (cung 1)',
+   _bp[5]===1&&_bp[9]===5&&_bp[1]===6&&_bp[6]===2&&_bp[4]===9, JSON.stringify(_bp));
+ var _hk9=hkChart(9,'rev'),_bp9={};_hk9.forEach(function(c){_bp9[c.palace]=c.star;});
+ T('Huyền Không: Cửu Tử nhập trung bay nghịch — cung 5 tinh 9, cung 6 tinh 8',_bp9[5]===9&&_bp9[6]===8);
+}catch(e){T('Huyền Không: lỗi',false,String(e));}
+try{
+ T('Hóa Tiến Thần: Hợi→Tý, Dần→Mão, Tỵ→Ngọ, Thân→Dậu',TIEN_THAN['Hợi']==='Tý'&&TIEN_THAN['Dần']==='Mão'&&TIEN_THAN['Tỵ']==='Ngọ'&&TIEN_THAN['Thân']==='Dậu');
+ T('Hóa Tiến Thần (Thổ tứ mộ +3): Sửu→Thìn→Mùi→Tuất→Sửu',TIEN_THAN['Sửu']==='Thìn'&&TIEN_THAN['Thìn']==='Mùi'&&TIEN_THAN['Mùi']==='Tuất'&&TIEN_THAN['Tuất']==='Sửu');
+ T('Hóa Thoái Thần: Tý→Hợi, Tuất→Mùi, Thìn→Sửu',THOAI_THAN['Tý']==='Hợi'&&THOAI_THAN['Tuất']==='Mùi'&&THOAI_THAN['Thìn']==='Sửu');
+ T('Dụng thần sức khỏe tự hỏi = Thế hào (không phải Tử Tôn cố định)',dungThanByDom('sk').lt==='Thế hào'&&dungThanByDom('sức khỏe').lt==='Thế hào');
+ T('Vượng Tướng Hưu Tù Tử: Mộc lâm Mão=Vượng, lâm Thân=Tử, Hỏa lâm Dần=Tướng',vuongTuong('Mộc',3)==='Vượng'&&vuongTuong('Mộc',8)==='Tử'&&vuongTuong('Hỏa',2)==='Tướng');
+ var _cCan=haoChiList([true,true,true,true,true,true]),_cKhon=haoChiList([false,false,false,false,false,false]);
+ var _pp1=phanLoaiPhucPhan(_cCan,_cKhon,[true,true,true,true,true,true]);
+ T('Quái Phản Ngâm: Càn biến Khôn (6 hào động, biến quẻ = đối quẻ 錯卦)',_pp1.doiQue===true);
+ var _cNoiChan=haoChiList([true,false,false,true,true,true]);
+ var _pp2=phanLoaiPhucPhan(_cCan,_cNoiChan,[false,true,true,false,false,false]);
+ T('Nội Quái Phục Ngâm: Càn hóa Chấn nội quái (nạp chi Tý Dần Thìn không đổi)',_pp2.fuN===3&&_pp2.dongN===2&&_pp2.fan===0);
+ var _cKhonNgoaiTon=haoChiList([false,false,false,false,true,true]);
+ var _pp3=phanLoaiPhucPhan(_cKhon,_cKhonNgoaiTon,[false,false,false,false,true,true]);
+ T('Ngoại Quái Phản Ngâm: Khôn hóa Tốn ngoại quái (Sửu Hợi Dậu xung Mùi Tỵ Mão)',_pp3.fanW===3&&_pp3.dongW===2);
+ var _cVoVong=haoChiList([true,false,false,true,true,true]),_cDaiTrang=haoChiList([true,true,true,true,false,false]);
+ var _pp4=phanLoaiPhucPhan(_cVoVong,_cDaiTrang,[false,true,true,false,true,true]);
+ T('Quái Phục Ngâm: Vô Vọng chi Đại Tráng (nội Chấn hóa Càn, ngoại Càn hóa Chấn — 6 chi bất biến)',_pp4.fu===6&&_pp4.dongN>0&&_pp4.dongW>0);
+}catch(e){T('Phục/Phản Ngâm + Tiến/Thoái: lỗi',false,String(e));}
   var jd2000=jdFromDate(1,1,2000);
   var dIdx=(jd2000+49)%60;
   T('Trụ ngày 1/1/2000 = Mậu Ngọ',dIdx===54,CAN[dIdx%10]+' '+CHI[dIdx%12]);
@@ -11071,7 +11119,7 @@ function huThucScore(num,yang,mv,dom){
  for(var i=0;i<6;i++){
  var chi=chiList[i],el=CHI_EL[chi],lt=lucThan(cungEl,el);
  var d={i:i,chi:chi,el:el,lt:lt,isThe:(i+1===tu.the),isUng:(i+1===tu.ung),isMv:(mv&&mv[i])};
- haoData.push(d);if(dt.lt&&lt===dt.lt&&dungIdx<0)dungIdx=i;
+ haoData.push(d);if(((dt.lt==='Thế hào'&&d.isThe)||(dt.lt&&dt.lt!=='Thế hào'&&lt===dt.lt))&&dungIdx<0)dungIdx=i;
  }
  if(dt.lt){
  if(dungIdx>=0){
@@ -11106,8 +11154,12 @@ function huThucScore(num,yang,mv,dom){
  if(mvi.length){
  var hb=0,bienYang=yang.map(function(y,ix){return mv[ix]?!y:y;}),bienChi=haoChiList(bienYang);
  mvi.forEach(function(mi){
- var c0=CHI_ID[chiList[mi]],c1=CHI_ID[bienChi[mi]],e0=CHI_EL[chiList[mi]],e1=CHI_EL[bienChi[mi]];
- if(e0===e1)hb+=(c1===(c0+1)%12)?4:-4;
+ var c0=CHI_ID[chiList[mi]],e0=CHI_EL[chiList[mi]],e1=CHI_EL[bienChi[mi]];
+ if(e0===e1){
+  if(TIEN_THAN[chiList[mi]]===bienChi[mi])hb+=4;
+  else if(THOAI_THAN[chiList[mi]]===bienChi[mi])hb-=4;
+  else if((c0+6)%12===CHI_ID[bienChi[mi]])hb-=3;
+ }
  else if(SINH[e1]===e0)hb+=5;
  else if(KHAC[e1]===e0)hb-=6;
  });
