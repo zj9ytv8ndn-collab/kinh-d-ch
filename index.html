@@ -7196,7 +7196,9 @@ resultHTML=function(q,dom,cast,forModal){
  var vals=cast.vals;var yang=vals.map(function(v){return v===7||v===9;});
  var mv=cast.moving||vals.map(function(v){return v===6||v===9;});
  var block=bocThanhBlock(res.num,yang,mv,dom);
- res.html=res.html.replace('<h3>Đại Tượng Truyện</h3>',block+'<h3>Đại Tượng Truyện</h3>');
+ var ht='';
+ try{ht=huThucBlock(res.num,yang,mv,dom);}catch(e){}
+ res.html=res.html.replace('<h3>Đại Tượng Truyện</h3>',ht+block+'<h3>Đại Tượng Truyện</h3>');
  }catch(e){}
  return res;
 };
@@ -11208,14 +11210,6 @@ function huThucBlock(num,yang,mv,dom){
  return h;
  }catch(e){return '';}
 }
-try{
- var _btbHT=bocThanhBlock;
- bocThanhBlock=function(num,yang,mv,dom){
- var h=_btbHT(num,yang,mv,dom);
- try{h+=huThucBlock(num,yang,mv,dom);}catch(e){if(typeof console!=='undefined')console.warn('huThuc',e);}
- return h;
- };
-}catch(e){if(typeof console!=='undefined')console.warn('huThuc init',e);}
 var CX_YEAR_Q={};
 (function(){function put(branchIdx,vals){var cans=[3,7,1,5,9]; }
  var rows=[
