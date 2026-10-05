@@ -125,7 +125,7 @@ window.addEventListener('load',function(){
 <script>(function(){var out=document.getElementById('kcOut');
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 function clean(){var o=document.getElementById('kdTestPanel');if(o&&o.parentNode)o.parentNode.removeChild(o);}
-function render(){var t=window.__KD_TEST_RESULT||null,k=window.__KD_KC_RESULT||null,h='';
+function render(){var t=window.__KD_TEST_RESULT||null,k=window.__KD_KC_RESULT||null,h='';h+='<div style="font-size:11px;opacity:.6;margin-bottom:6px">Bản dựng: <b style="color:#e8c766">2026-10-05-kdupg35-score</b></div>';
 if(t){h+='<b>KDTEST — động cơ tính quẻ:</b> '+t.pass+' PASS / '+t.fail+' FAIL<br>';}
 if(k){h+='<b>KIEMCHUNG — đối chiếu cổ pháp:</b> '+k.pass+' PASS / '+k.fail+' FAIL<br>';
 if(k.log&&k.log.length){h+='<span style="opacity:.8;font-size:12px">'+k.log.map(esc).join('<br>')+'</span>';}}
