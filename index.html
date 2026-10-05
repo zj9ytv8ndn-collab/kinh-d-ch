@@ -2427,6 +2427,124 @@ function coPhapSection(x,dong,bx){
 
 /* ================= P0 · 1.1 — HÀO ĐỘNG SINH KHẮC THẾ ỨNG + NGUYỆT/NHẬT KIẾN + TUẦN KHÔNG ================= */
 var CHI_EL_BQ={Tý:'Thủy',Sửu:'Thổ',Dần:'Mộc',Mão:'Mộc',Thìn:'Thổ',Tỵ:'Hỏa',Ngọ:'Hỏa',Mùi:'Thổ',Thân:'Kim',Dậu:'Kim',Tuất:'Thổ',Hợi:'Thủy'};
+/* ============ P0 · 1.1a — SÁT PHỤ CỔ PHÁP: LỤC HÌNH · LỤC HẠI · HỢP CỤC · TỨ HÀNH XUNG · QUẺ THÂN ============
+   Hình: Tý–Mão vô lễ · Dần–Tỵ–Thân vô ân · Sửu–Tuất–Mùi thị thế · Thìn/Ngọ/Dậu/Hợi tự hình (《Đoạn Dị Đại Toàn》)
+   Hại: Tý–Mùi · Sửu–Ngọ · Dần–Tỵ · Mão–Thìn · Thân–Hợi · Dậu–Tuất (lục hại phá hợp, chủ bị hại, khẩu thiệt)
+   Hợp cục: 4 tam hợp cục + 6 nhị hợp hóa + tứ hành xung Dần Thân Tỵ Hải
+   Quẻ thân: dương thế đếm từ Tý, âm thế đếm từ Ngọ đến hào Thế — 《Bố Tệ Chính Tông》"Thân quẻ tòng hào thế thân" */
+var HINH_DOI={Tý:'Mão',Mão:'Tý',Dần:'Tỵ',Tỵ:'Thân',Thân:'Dần',Sửu:'Tuất',Tuất:'Mùi',Mùi:'Sửu'};
+var HINH_TU=['Thìn','Ngọ','Dậu','Hợi'];
+var HAI_DOI={Tý:'Mùi',Mùi:'Tý',Sửu:'Ngọ',Ngọ:'Sửu',Dần:'Tỵ',Tỵ:'Dần',Mão:'Thìn',Thìn:'Mão',Thân:'Hợi',Hợi:'Thân',Dậu:'Tuất',Tuất:'Dậu'};
+var NHI_HOP_C=[['Tý','Sửu','Thổ'],['Dần','Hợi','Mộc'],['Mão','Tuất','Hỏa'],['Thìn','Dậu','Kim'],['Tỵ','Thân','Thủy'],['Ngọ','Mùi','Thổ']];
+var TAM_HOP_C=[['Dần','Ngọ','Tuất','Hỏa'],['Thân','Tý','Thìn','Thủy'],['Tỵ','Dậu','Sửu','Kim'],['Hợi','Mão','Mùi','Mộc']];
+var TU_XUNG_C=['Dần','Thân','Tỵ','Hải'];
+function hinhHaiNote(chi,mkChi,dayChi,haoChis,self,mv,tu){
+ var n=[];
+ if(HINH_DOI[chi]){
+  if(mkChi===HINH_DOI[chi])n.push('nguyệt hình '+chi+'–'+mkChi);
+  if(dayChi===HINH_DOI[chi])n.push('nhật hình '+chi+'–'+dayChi);
+ }
+ if(HINH_TU.indexOf(chi)>=0){
+  if(mkChi===chi)n.push('tự hình phạm nguyệt ('+chi+')');
+  if(dayChi===chi)n.push('tự hình phạm nhật ('+chi+')');
+ }
+ if(HAI_DOI[chi]){
+  if(mkChi===HAI_DOI[chi])n.push('nguyệt hại '+chi+'–'+mkChi);
+  if(dayChi===HAI_DOI[chi])n.push('nhật hại '+chi+'–'+dayChi);
+ }
+ for(var j=0;j<haoChis.length;j++){
+  if(j===self)continue;
+  var hot=mv[self]||mv[j]||self+1===tu.the||self+1===tu.ung||j+1===tu.the||j+1===tu.ung;
+  if(!hot)continue;
+  var oc=haoChis[j];
+  if(HINH_DOI[chi]===oc)n.push('hình hào '+(j+1)+' ('+oc+')');
+  else if(HINH_DOI[oc]===chi)n.push('bị hào '+(j+1)+' '+oc+' hình');
+  if(HAI_DOI[chi]===oc||HAI_DOI[oc]===chi)n.push('hại hào '+(j+1)+' ('+oc+')');
+ }
+ return n;
+}
+function quetheanIdx(yang,tu,haoChis){
+ var ti=tu.the-1;
+ var thanChi=yang[ti]?CHI[ti]:CHI[(ti+6)%12];
+ return {chi:thanChi,idx:haoChis.indexOf(thanChi)};
+}
+function hopCucList(haoChis,mkChi,dayChi){
+ var pool={},src={};
+ function add(c,s){if(!pool[c]){pool[c]=0;src[c]=[];}pool[c]++;src[c].push(s);}
+ add(mkChi,'nguyệt');add(dayChi,'nhật');
+ haoChis.forEach(function(c,i){add(c,'hào'+(i+1));});
+ var out=[];
+ TAM_HOP_C.forEach(function(g){
+  var hit=[g[0],g[1],g[2]].filter(function(c){return pool[c];});
+  if(hit.length===3){
+   out.push(['cuc','Tam hợp cục <b>'+g[3]+'</b> — '+g[0]+'·'+g[1]+'·'+g[2]+' đủ mặt ('+g.slice(0,3).map(function(c){return c+'='+src[c].join('+');}).join(', ')+') → cục '+g[3]+' thành lập, sức sinh khắc trong cục tăng gấp bội; đại lợi việc thuộc hành '+g[3]+'.']);
+  }else if(hit.length===2){
+   var fromM=hit.indexOf(mkChi)>=0,fromD=hit.indexOf(dayChi)>=0;
+   if(fromM||fromD){
+    var miss=[g[0],g[1],g[2]].filter(function(c){return hit.indexOf(c)<0;})[0];
+    out.push(['ban','Bán cục <b>'+g[3]+'</b> — có '+hit.join('·')+', thiếu '+miss+' → cục chưa thành; ngày/tháng mang chi '+miss+' thì thành cục, việc đổi chiều rõ rệt.']);
+   }
+  }
+ });
+ NHI_HOP_C.forEach(function(g){
+  if(pool[g[0]]&&pool[g[1]]&&(g[0]===mkChi||g[1]===mkChi||g[0]===dayChi||g[1]===dayChi)){
+   out.push(['hop','Nhị hợp <b>'+g[0]+'–'+g[1]+' hóa '+g[2]+'</b> ('+g[0]+'='+src[g[0]].join('+')+', '+g[1]+'='+src[g[1]].join('+')+') → hào bị hợp vào chịu "hợp trụ" (合住): động mà bị giữ chưa phát; đợi ngày xung khai mới hiệu nghiệm.']);
+  }
+ });
+ var tx=TU_XUNG_C.filter(function(c){return pool[c];});
+ if(tx.length===4){
+  out.push(['xung','<b>TỨ HÀNH XUNG CỤC</b> — Dần·Thân·Tỵ·Hải đủ cả (nguyệt '+mkChi+', nhật '+dayChi+', chi các hào) → xung loạn toàn cục: việc biến động dữ dội, buộc dứt khoát; kỵ khởi sự dài hạn. Nếu Thế vượng thì "xung mà phát" — loạn trung có cơ hội.']);
+ }else if(tx.length===3&&tx.indexOf(mkChi)>=0){
+  var miss2=TU_XUNG_C.filter(function(c){return tx.indexOf(c)<0;})[0];
+  out.push(['xung','Nguyệt phạm tứ xung — đã có '+tx.join('·')+', thiếu '+miss2+' → cục chưa thành mà khí đã loạn; ngày mang chi '+miss2+' dễ xảy biến lớn.']);
+ }
+ return out;
+}
+/* ============ P0 · 1.1b — NGŨ HỢP HÓA · SỐ QUẺ ĐỊNH HẠN · THỰC HƯ 5 TIÊU CHÍ ============
+   Ngũ hợp hóa: 甲己化土 · 乙庚化金 · 丙辛化水 · 丁壬化木 · 戊癸化火 — can của hào gặp can nguyệt/nhật
+   Số quẻ định hạn: (thượng quái số + hạ quái số + hào động số) — Hậu Thiên số Càn1 Đoài2 Ly3 Chấn4 Tốn5 Khảm6 Cấn7 Khôn8
+   Thực hư 5 tiêu chí (《Đoạn Dị Chính Tông》): vượng theo nguyệt · đắc nhật · động · không lọt không · hợp trụ trợ lực */
+var WU_HOP_HOA=[['Giáp','Kỷ','Thổ'],['Ất','Canh','Kim'],['Bính','Tân','Thủy'],['Đinh','Nhâm','Mộc'],['Mậu','Quý','Hỏa']];
+var BQ_SO={Càn:1,Đoài:2,Ly:3,Chấn:4,Tốn:5,Khảm:6,Cấn:7,Khôn:8};
+function hoaHopCanList(lines,mkCan,dayCan){
+ var out=[];
+ lines.forEach(function(gz,i){
+  var can=gz.split(' ')[0];
+  WU_HOP_HOA.forEach(function(g){
+   if((can===g[0]&&dayCan===g[1])||(can===g[1]&&dayCan===g[0]))out.push(['nhật','Hào '+(i+1)+' mang can <b>'+can+'</b> hợp hóa với nhật can <b>'+dayCan+'</b> → hóa <b>'+g[2]+'</b> — tính chất hào chuyển theo hành '+g[2]+'; việc có thể đổi hướng theo hóa.']);
+   else if((can===g[0]&&mkCan===g[1])||(can===g[1]&&mkCan===g[0]))out.push(['nguyệt','Hào '+(i+1)+' mang can <b>'+can+'</b> hợp hóa với nguyệt can <b>'+mkCan+'</b> → hóa <b>'+g[2]+'</b> — trong tháng hào mang khí hóa '+g[2]+'.']);
+  });
+ });
+ return out;
+}
+function soQueHanHTML(x,mvPos){
+ if(!mvPos.length)return '<p style="font-size:14px;opacity:.85;margin:4px 0">Quẻ tĩnh — cổ pháp không lấy số quẻ định hạn; xem ứng kỳ theo lục hợp/xung và nhật thần ở các mục trên.</p>';
+ if(mvPos.length>1)return '<p style="font-size:14px;opacity:.85;margin:4px 0">Quẻ có '+mvPos.length+' hào động — số quẻ định hạn cổ pháp lấy khi một hào động; nhiều hào động xem phân tầng ứng kỳ theo từng hào.</p>';
+ var d=mvPos[0]+1,s=(BQ_SO[x.up]||0)+(BQ_SO[x.lo]||0),t=s+d;
+ var r6=t%6,r60=t%60;
+ return '<p style="font-size:14px;line-height:1.65;margin:4px 0">Thượng quái '+x.up+' = '+(BQ_SO[x.up]||'?')+' · Hạ quái '+x.lo+' = '+(BQ_SO[x.lo]||'?')+' · Hào động '+d+' → tổng <b>'+t+'</b>. Chia 6 dư <b>'+(r6||6)+'</b> → ứng trong <b>'+(r6||6)+' ngày</b>; chia 60 dư <b>'+(r60||60)+'</b> → ngày thứ '+(r60||60)+' trong lục thập hoa giáp. Đối chiếu ứng kỳ lục hợp/xung bên trên để chốt hạn.</p>';
+}
+function thucHu5List(haoChis,mkChi,dayChi,khong,mv,tu){
+ var out=[],mkEl=CHI_EL_BQ[mkChi],dayEl=CHI_EL_BQ[dayChi];
+ haoChis.forEach(function(chi,i){
+  if(!(i+1===tu.the||i+1===tu.ung||mv[i]))return;
+  var el=CHI_EL_BQ[chi],score=0,why=[];
+  if(chi===mkChi){score+=2;why.push('lâm nguyệt kiến (vượng)');}
+  else if(SHENG_BQ[mkEl]===el){score+=2;why.push('được nguyệt sinh (tướng)');}
+  else if(SHENG_BQ[el]===mkEl){score+=1;why.push('sinh nguyệt (hưu, khí tiết)');}
+  else if(KE_BQ[mkEl]===el){score-=1;why.push('bị nguyệt khắc (tử)');}
+  else if(KE_BQ[el]===mkEl){why.push('khắc nguyệt (tù, lực bị giam)');}
+  else {score+=1;why.push('tỉ hòa nguyệt');}
+  if(chi===dayChi){score+=1;why.push('trùng nhật thần');}
+  else if(SHENG_BQ[dayEl]===el)why.push('được nhật sinh');
+  if(mv[i]){score+=1;why.push('động hào');}
+  if(khong.indexOf(chi)>=0){score-=2;why.push('lọt tuần không');}
+  else {score+=1;why.push('không lọt không');}
+  if(NHI_HOP_C.some(function(g){return (g[0]===chi&&(g[1]===mkChi||g[1]===dayChi))||(g[1]===chi&&(g[0]===mkChi||g[0]===dayChi));})){score+=1;why.push('được nhị hợp (trụ)');}
+  out.push({i:i,chi:chi,role:i+1===tu.the?'Thế':(i+1===tu.ung?'Ứng':'Động'),vd:score>=3?'THỰC 實':(score>=1?'trung bình':'HƯ 虛'),why:why});
+ });
+ return out;
+}
 function yangFromVals(vals){return vals.map(function(v){return v%2===1;});}
 function movingIdx(vals){var r=[];vals.forEach(function(v,i){if(v===6||v===9)r.push(i+1);});return r;}
 function tuanKhongChi(d,m,y){
@@ -3456,25 +3574,27 @@ function lucThanBlock(x,bx,mv,cast){
  var khong=xunKhong_BQ(dc);
  var mkIdx=nguyetKien_BQ(nd.getFullYear(),nd.getMonth()+1,nd.getDate());
  var mkChi=CHI[mkIdx],mkEl=CHI_EL_BQ[mkChi];
+ var haoChis=lines.map(function(gz){return gz.split(' ')[1];});
+ var qth=quetheanIdx(yang,tu,haoChis);
  var LT_THU2=['Thanh Long','Chu Tước','Câu Trần','Đằng Xà','Bạch Hổ','Huyền Vũ'];
  var thuStart2=[0,0,1,1,2,3,4,4,5,5][dc.can];
  function monthNote(el,chi){
   var ci=CHI.indexOf(chi);
   if(Math.abs(ci-mkIdx)===6)return 'nguyệt phá 月破 — suy đại';
   if(ci===mkIdx)return 'lâm nguyệt kiến — vượng';
-  if(SHENG_BQ[mkEl]===el)return 'đắc nguyệt sinh — vượng';
-  if(KE_BQ[mkEl]===el)return 'bị nguyệt khắc — suy';
-  if(SHENG_BQ[el]===mkEl)return 'sinh nguyệt — tiết hao';
-  if(KE_BQ[el]===mkEl)return 'khắc nguyệt — hao nhẹ';
-  return 'tỉ hòa nguyệt';
+  if(SHENG_BQ[mkEl]===el)return 'đắc nguyệt sinh — tướng 相';
+  if(KE_BQ[mkEl]===el)return 'bị nguyệt khắc — tử 死 (sát)';
+  if(SHENG_BQ[el]===mkEl)return 'sinh nguyệt — hưu 休 (tiết hao)';
+  if(KE_BQ[el]===mkEl)return 'khắc nguyệt — tù 囚 (bị giam)';
+  return 'tỉ hòa nguyệt — vượng 旺';
  }
  var mvPos=[];mv.forEach(function(b,i){if(b)mvPos.push(i);});
  function dayNote(el){
-  if(SHENG_BQ[dayEl]===el)return 'đắc nhật sinh — vượng';
-  if(KE_BQ[dayEl]===el)return 'bị nhật khắc — suy';
-  if(SHENG_BQ[el]===dayEl)return 'sinh nhật — tiết khí hao';
-  if(KE_BQ[el]===dayEl)return 'khắc nhật — hưu hao nhẹ';
-  return 'tỉ hòa nhật — bình';
+  if(SHENG_BQ[dayEl]===el)return 'đắc nhật sinh — tướng 相';
+  if(KE_BQ[dayEl]===el)return 'bị nhật khắc — tử 死 (sát)';
+  if(SHENG_BQ[el]===dayEl)return 'sinh nhật — hưu 休 (tiết khí hao)';
+  if(KE_BQ[el]===dayEl)return 'khắc nhật — tù 囚 (bị giam)';
+  return 'tỉ hòa nhật — vượng 旺';
  }
  var rows='';
  for(var i=0;i<6;i++){
@@ -3487,8 +3607,8 @@ function lucThanBlock(x,bx,mv,cast){
   +'<td style="padding:5px 8px;border-bottom:1px solid rgba(232,199,102,.15)">'+gz+'</td>'
   +'<td style="padding:5px 8px;border-bottom:1px solid rgba(232,199,102,.15)">'+el+'</td>'
   +'<td style="padding:5px 8px;border-bottom:1px solid rgba(232,199,102,.15);font-size:12.5px;opacity:.9">'+LT_THU2[(thuStart2+i)%6]+'</td>'
-  +'<td style="padding:5px 8px;border-bottom:1px solid rgba(232,199,102,.15)"><b>'+lt+'</b>'+badge+dong+isKhong+'</td>'
-  +'<td style="padding:5px 8px;border-bottom:1px solid rgba(232,199,102,.15);font-size:12px;opacity:.9"><div>'+monthNote(el,chi)+'</div><div style="opacity:.8">'+dayNote(el)+'</div></td></tr>';
+  +'<td style="padding:5px 8px;border-bottom:1px solid rgba(232,199,102,.15)"><b>'+lt+'</b>'+badge+dong+isKhong+(qth.idx===i?' <b style="color:#9fd8a8">Thân 身</b>':'')+'</td>'
+  +'<td style="padding:5px 8px;border-bottom:1px solid rgba(232,199,102,.15);font-size:12px;opacity:.9"><div>'+monthNote(el,chi)+'</div><div style="opacity:.8">'+dayNote(el)+'</div>'+(function(){var _hh=hinhHaiNote(chi,mkChi,dayChi,haoChis,i,mv,tu);return (!_hh.length)?'':'<div style="font-size:11.5px;color:#d98a8a;line-height:1.5;margin-top:2px">'+_hh.map(function(t){return '⚠ '+t;}).join('<br>')+'</div>';})()+'</td></tr>';
  }
  var theIdx=tu.the-1,theEl=CHI_EL_BQ[lines[theIdx].split(' ')[1]];
  var anal='';
@@ -3509,13 +3629,38 @@ function lucThanBlock(x,bx,mv,cast){
  }
  return '<div class="card" style="margin-top:12px;border-color:rgba(127,179,213,.4)">'
  +'<h2 style="display:flex;align-items:center;gap:8px"><span>⚔</span> Lục Thân 六親 <small style="font-size:12px;opacity:.7">— nạp giáp Kinh Phòng · hành của '+TRI[pal].name+' cung ('+palEl+')</small></h2>'
- +'<p style="font-size:13.5px;opacity:.85;margin:4px 0 8px">Ngày gieo: <b>'+dc.name+'</b> (hành '+dayEl+') · Nguyệt kiến: <b>'+mkChi+'</b> (hành '+mkEl+', theo tiết khí giờ VN) · Tuần không: <b>'+khong.join(', ')+'</b><br>'+(function(){try{var _ts=(typeof cast!=='undefined'&&cast&&cast.meta&&cast.meta.ts)?cast.meta.ts:Date.now();var _nd=new Date(_ts);var _hIdx=Math.floor(((_nd.getHours()+1)%24)/2);var _hc=hourCanChi(dc.can,_hIdx);var _hChiIdx=CHI.indexOf(_hc.split(' ')[1]);var _dChiIdx=dc.chi;var _xung=(CHI_XUNG[_hChiIdx]===_dChiIdx);
+ +'<p style="font-size:13.5px;opacity:.85;margin:4px 0 8px">Ngày gieo: <b>'+dc.name+'</b> (hành '+dayEl+') · Nguyệt kiến: <b>'+mkChi+'</b> (hành '+mkEl+', theo tiết khí giờ VN) · Tuần không: <b>'+khong.join(', ')+'</b><br>'+(function(){try{var _ts=(typeof cast!=='undefined'&&cast&&cast.meta&&cast.meta.ts)?cast.meta.ts:Date.now();var _nd=new Date(_ts);var _hIdx=Math.floor(((_nd.getHours()+1)%24)/2);var _hc=hourCanChi(dc.can,_hIdx);var _hChiIdx=CHI.indexOf(_hc.split(' ')[1]);var _dChiIdx=dc.chi;var _xung=((_hChiIdx+6)%12===_dChiIdx);
 var _mkIdx=CHI.indexOf(mkChi);
 var _truc=TRUC12[(((dc.chi-_mkIdx)%12)+12)%12];
 var _trucTxt='Trực ngày: <b>'+_truc+'</b>'+(_truc==='Kiến'?' <span style="color:#9fd8a8">(kiến nhật — bắt đầu mới, thuận lợi)</span>':_truc==='Trừ'?' <span style="color:#e8c06a">(trừ nhật — nên dọn dẹp, tránh khởi sự)</span>':_truc==='Mãn'?' <span style="color:#9fd8a8">(mãn nhật — viên mãn, tốt cho cầu tài)</span>':_truc==='Bình'?' <span style="opacity:.75">(bình nhật — trung bình)</span>':_truc==='Định'?' <span style="color:#9fd8a8">(định nhật — ổn định, tốt cho giao dịch)</span>':_truc==='Chấp'?' <span style="color:#e8c06a">(chấp nhật — nên giữ nguyên, tránh thay đổi)</span>':_truc==='Phá'?' <span style="color:#e88a8a">(phá nhật — dễ vỡ việc, thận trọng)</span>':_truc==='Nguy'?' <span style="color:#e88a8a">(nguy nhật — ngày xấu, không nên khởi sự)</span>':_truc==='Thành'?' <span style="color:#9fd8a8">(thành nhật — thành tựu, tốt cho mọi việc)</span>':_truc==='Thu'?' <span style="color:#e8c06a">(thu nhật — thu hoạch, nên gom góp)</span>':_truc==='Khai'?' <span style="color:#9fd8a8">(khai nhật — mở màn, tốt cho khởi nghiệp)</span>':' <span style="color:#e88a8a">(bế nhật — đóng kín, kỵ khởi sự)</span>');
 return 'Giờ gieo: <b>'+_hc+'</b>'+(_xung?' <span style="color:#e88a8a">⚠ xung ngày '+CHI[dc.chi]+' (lục xung) — giờ gieo xung nhật, kết quả dễ biến động; nên tham khảo thêm giờ hợp</span>':' <span style="opacity:.75">(hợp nhật)</span>')+' · '+_trucTxt;}catch(e){return '';}})()+'</p>'
  +'<table style="width:100%;border-collapse:collapse;font-size:14px"><tr style="text-align:left;opacity:.75"><th style="padding:4px 8px">Hào</th><th style="padding:4px 8px">Can Chi</th><th style="padding:4px 8px">Hành</th><th style="padding:4px 8px">Lục thú 六獸</th><th style="padding:4px 8px">Lục thân</th><th style="padding:4px 8px">Nguyệt · Nhật</th></tr>'+rows+'</table>'
  +'<h3 style="margin:12px 0 4px;font-size:15px">Động hào xét Thế 世 ('+lines[theIdx]+' — hành '+theEl+')</h3>'+anal
+ +(function(){
+  var qthHtml;
+  if(qth.idx>=0){
+   var qthNote=(mkChi===qth.chi)?' — trùng cả nguyệt kiến, thân cực vượng':((CHI[(CHI.indexOf(qth.chi)+6)%12]===mkChi)?' — nhưng thân bị nguyệt xung: vật đổi sao dời, việc dễ đổi chủ, đổi tay':'');
+   qthHtml='<h3 style="margin:12px 0 4px;font-size:15px">Quẻ Thân 卦身 <small style="font-size:11.5px;opacity:.7">[Cổ pháp] — 《Bố Tệ Chính Tông》: thân quẻ tòng hào thế thân</small></h3><p style="font-size:14px;line-height:1.65;margin:4px 0">Thân quẻ tại hào '+P[qth.idx]+' <b>'+lines[qth.idx]+'</b> (hành '+CHI_EL_BQ[qth.chi]+')'+qthNote+'. Việc có chủ thể rõ ràng, bám được vào con người, của cải cụ thể; thân hào bị xung tán thì của đổi chủ, người đổi lòng — đối chiếu bảng hình · hại bên trên.</p>';
+  }else{
+   qthHtml='<h3 style="margin:12px 0 4px;font-size:15px">Quẻ Thân 卦身 <small style="font-size:11.5px;opacity:.7">[Cổ pháp] — 《Bố Tệ Chính Tông》</small></h3><p style="font-size:14px;line-height:1.65;margin:4px 0">Quẻ vô thân — 6 hào không mang chi '+qth.chi+' (chi thân của thế '+tu.the+'). Việc thiếu chủ thể, dễ đổi trục; đợi ngày mang chi '+qth.chi+' thì việc theo hào mang chi ấy mà đoán.</p>';
+  }
+  var _cl=hopCucList(haoChis,mkChi,dayChi);
+  var cucHtml=_cl.length?'<h3 style="margin:12px 0 4px;font-size:15px">Hợp · Xung Cục 合沖局 <small style="font-size:11.5px;opacity:.7">[Cổ pháp] đối chiếu nguyệt kiến · nhật thần · chi 6 hào</small></h3><ul style="margin:6px 0 2px;padding-left:20px;font-size:14px;line-height:1.65">'+_cl.map(function(c){return '<li style="margin:4px 0'+(c[0]==='xung'?';color:#e88a8a':'')+'">'+(c[0]==='xung'?'⚠ ':'')+c[1]+'</li>';}).join('')+'</ul>':'';
+  var _d=new Date(cast.meta.ts),_yc=(_d.getFullYear()+6)%10;
+  var _mkCan=CAN[(_yc*2+CHI.indexOf(mkChi))%10],_dayCan=CAN[dc.can];
+  var _hh=hoaHopCanList(lines,_mkCan,_dayCan);
+  var hoaHopHtml=_hh.length?'<h3 style="margin:12px 0 4px;font-size:15px">Ngũ Hợp Hóa 五合化 <small style="font-size:11.5px;opacity:.7">[Cổ pháp] can hào hợp hóa với can nguyệt/nhật</small></h3><ul style="margin:6px 0 2px;padding-left:20px;font-size:14px;line-height:1.65">'+_hh.map(function(c){return '<li style="margin:4px 0">'+c[1]+'</li>';}).join('')+'</ul>':'';
+  var soQueHtml='<h3 style="margin:12px 0 4px;font-size:15px">Số Quẻ Định Hạn 卦數 <small style="font-size:11.5px;opacity:.7">[Cổ pháp] thượng + hạ + hào động</small></h3>'+soQueHanHTML(x,mvPos);
+  var _th=thucHu5List(haoChis,mkChi,dayChi,khong,mv,tu);
+  var th5Html='';
+  if(_th.length){
+   var _thR=_th.map(function(t){return '<li style="margin:4px 0"><b>Hào '+(t.i+1)+' '+t.chi+'</b> ('+t.role+') — <b style="color:'+(t.vd==='THỰC 實'?'#9fd8a8':(t.vd==='HƯ 虛'?'#d98a8a':'#e8c766'))+'">'+t.vd+'</b> <span style="opacity:.75;font-size:12.5px">('+t.why.join(' · ')+')</span></li>';}).join('');
+   var _the=_th.filter(function(t){return t.role==='Thế';})[0];
+   var _theNote=_the?('<p style="font-size:14px;margin:4px 0">Thế hào <b>'+_the.vd+'</b> — '+(_the.vd==='THỰC 實'?'việc có gốc bền, đoán theo thực tế.':(_the.vd==='HƯ 虛'?'việc còn hư ảo — phải có nhật/nguyệt phù trợ hoặc đợi xuất không mới thành; đề phòng niềm tin mềm yếu.':'việc nửa thực nửa hư — xét thêm động hào và cục hợp/xung bên trên.'))+'</p>'):'';
+   th5Html='<h3 style="margin:12px 0 4px;font-size:15px">Thực Hư 5 Tiêu Chí 虛實 <small style="font-size:11.5px;opacity:.7">[Cổ pháp — 《Đoạn Dị Chính Tông》] vượng nguyệt · đắc nhật · động · không lọt không · hợp trụ</small></h3><ul style="margin:6px 0 2px;padding-left:20px;font-size:14px;line-height:1.65">'+_thR+'</ul>'+_theNote;
+  }
+  return qthHtml+cucHtml+hoaHopHtml+soQueHtml+th5Html;
+ })()
  +'</div>'
  +sinhLucBlock(pal,palEl,lines,mv,tu,dc,mkChi,khong,mkIdx,mkEl,dayEl);
 }
@@ -3623,7 +3768,7 @@ function resultHTML(q,dom,cast,forModal){
  gioi='Quẻ tĩnh, sáu hào an: cục diện ổn định, kỵ nhất là nóng vội thay đổi khi chưa đến thời; giữ gìn hiện trạng, thận trọng từng bước nhỏ.'
  +(rel==='uk'||rel==='lk'?' Thượng hạ tương khắc: đặc biệt tránh xung đột trực diện với bề trên và hoàn cảnh, lui một bước để giữ toàn cục.':' Thuận thế mà làm, chớ sinh lòng kiêu căng khi mọi sự đang yên.');
  }
- var ung2='Số quẻ '+x.n+' nằm giữa hai số Fibonacci '+fb.lo+' và '+fb.hi+' — ứng kỳ ứng nghiệm gợi ý trong khoảng <b>'+fb.lo+'–'+fb.hi+' ngày</b> (việc lớn tính theo tuần hoặc tháng).';
+ var ung2='Số quẻ '+x.n+' nằm giữa hai số Fibonacci '+fb.lo+' và '+fb.hi+' — ứng kỳ ứng nghiệm gợi ý trong khoảng <b>'+fb.lo+'–'+fb.hi+' ngày</b> (việc lớn tính theo tuần hoặc tháng). <span style="font-size:12px;opacity:.75">(tham chiếu hiện đại — cổ pháp xem Ứng Kỳ hợp/xung và Số Quẻ Định Hạn ở bảng Lục Thân)</span>';
  if(method!=='coins'&&dong){
  var S2=(base.up+1)+(base.lo+1)+dong;
  ung2+=' Theo phép '+METHODS[method]+', ứng số = '+(base.up+1)+' + '+(base.lo+1)+' + '+dong+' = <b>'+S2+'</b> — thường ứng trong '+S2+' ngày.';
@@ -7196,9 +7341,7 @@ resultHTML=function(q,dom,cast,forModal){
  var vals=cast.vals;var yang=vals.map(function(v){return v===7||v===9;});
  var mv=cast.moving||vals.map(function(v){return v===6||v===9;});
  var block=bocThanhBlock(res.num,yang,mv,dom);
- var ht='';
- try{ht=huThucBlock(res.num,yang,mv,dom);}catch(e){}
- res.html=res.html.replace('<h3>Đại Tượng Truyện</h3>',ht+block+'<h3>Đại Tượng Truyện</h3>');
+ res.html=res.html.replace('<h3>Đại Tượng Truyện</h3>',block+'<h3>Đại Tượng Truyện</h3>');
  }catch(e){}
  return res;
 };
@@ -9979,6 +10122,26 @@ function KIEMCHUNG(){
     for(var d2=0;d2<10;d2++){var c2=(k2+d2)%12;if(c2===tkA||c2===tkB)cov=false;}
     if(!cov)eok=false;if(k2===0)edemo=CHI[tkA]+' & '+CHI[tkB];}
   T('Tuần không = 2 chi vắng của thập hoa giáp',eok,'Giáp Tý → '+edemo);
+  try{
+   T('Lục hình Tý–Mão (vô lễ chi hình)',hinhHaiNote('Tý','Mão','Sửu',['Tý','Thân','Sửu','Ngọ','Thìn','Dậu'],0,[1,0,0,0,0,0],{the:1,ung:4}).indexOf('nguyệt hình Tý–Mão')>=0);
+   T('Lục hại Sửu–Ngọ',hinhHaiNote('Sửu','Tý','Ngọ',['Tý','Sửu','Dần','Mão','Thìn','Tỵ'],1,[0,1,0,0,0,0],{the:2,ung:5}).indexOf('nhật hại')>=0);
+   T('Tam hợp Hỏa cục (Dần Ngọ Tuất)',hopCucList(['Dần','Sửu','Tuất','Tý','Dậu','Thân'],'Dần','Ngọ').some(function(c){return c[0]==='cuc'&&c[1].indexOf('Hỏa')>=0;}));
+   T('Tứ hành xung cục',hopCucList(['Dần','Thân','Tỵ','Hợi','Tý','Sửu'],'Dần','Thân').some(function(c){return c[0]==='xung';}));
+   var _c5=['Giáp Tý','Giáp Dần','Giáp Thìn','Nhâm Ngọ','Nhâm Thân','Nhâm Tuất'].map(function(s){return s.split(' ')[1];});
+   var _qt=quetheanIdx([1,1,1,1,1,1],{the:6,ung:3},_c5);
+   T('Quẻ thân Càn thuần (dương thế hào 6 → chi Tỵ, quẻ vô thân — đúng cổ sách)',_qt.chi==='Tỵ'&&_qt.idx<0,_qt.chi+' idx '+_qt.idx);
+   var _qt3=quetheanIdx([0,1,1,0,1,1],{the:6,ung:3},['Sửu','Hợi','Dậu','Mão','Tỵ','Mùi']);
+   T('Quẻ thân Tốn thuần (thân tại hào 5, chi Tỵ)',_qt3.idx===4&&_qt3.chi==='Tỵ',_qt3.chi+' idx '+_qt3.idx);
+   var _wh=hoaHopCanList(['Giáp Tý','Ất Sửu','Bính Dần','Đinh Mão','Mậu Thìn','Kỷ Tỵ'],'Đinh','Kỷ');
+   T('Ngũ hợp hóa Giáp–Kỷ hóa Thổ',_wh.length===1&&_wh[0][1].indexOf('Thổ')>=0,_wh.length+' mục');
+   var _sq=soQueHanHTML({up:'Càn',lo:'Càn'},[2]);
+   T('Số quẻ (Càn1+Càn1+3)=5 → ứng 5 ngày',_sq.indexOf('5 ngày')>=0);
+   var _th5=thucHu5List(['Tý','Dần','Thìn','Ngọ','Thân','Tuất'],'Thân','Dần',['Hợi','Tý'],[true,false,false,false,false,false],{the:3,ung:6});
+   T('Thực hư 5 tiêu chí — có đủ Thế/Ứng/Động',_th5.length===3&&_th5.some(function(t){return t.role==='Thế';}),_th5.map(function(t){return t.role+':'+t.vd;}).join(', '));
+   var _qt2=quetheanIdx([0,0,0,0,0,0],{the:6,ung:3},['Mậu Ngọ','Mậu Thân','Mậu Tuất','Mậu Tý','Mậu Dần','Mậu Thìn']);
+   T('Khôn thuần vô thân',_qt2.idx<0,_qt2.chi);
+   T('LUAN64 đủ 64 quẻ',Object.keys(LUAN64).length===64,Object.keys(LUAN64).length+' keys');
+  }catch(e){T('Sát phụ cổ pháp: lỗi',false,String(e));}
   var fok=true;
   for(var n3=1;n3<=64;n3++){for(var hd=0;hd<6;hd++){
     var b4=seen[n3].split('');b4[hd]=b4[hd]==='1'?'0':'1';
@@ -11210,6 +11373,14 @@ function huThucBlock(num,yang,mv,dom){
  return h;
  }catch(e){return '';}
 }
+try{
+ var _btbHT=bocThanhBlock;
+ bocThanhBlock=function(num,yang,mv,dom){
+ var h=_btbHT(num,yang,mv,dom);
+ try{h+=huThucBlock(num,yang,mv,dom);}catch(e){if(typeof console!=='undefined')console.warn('huThuc',e);}
+ return h;
+ };
+}catch(e){if(typeof console!=='undefined')console.warn('huThuc init',e);}
 var CX_YEAR_Q={};
 (function(){function put(branchIdx,vals){var cans=[3,7,1,5,9]; }
  var rows=[
