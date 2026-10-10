@@ -16405,4 +16405,77 @@ window.KD_PHASE60={version:VERSION,masterEntries:Object.keys(MASTER).length,calc
 
 </script>
 <!-- ===== END PHASE 60 SAFE ===== -->
+\n<!-- ===== PHASE 61: RESIDUAL VI->EN UI CLEANUP ===== -->
+<script id="kd-phase61-residual-en-cleanup">
+(function(){'use strict';
+var MAP=[
+['Phản Quẻ (綜卦) · Đối Quẻ (錯卦)','Inverse Hexagram (綜卦) · Opposite Hexagram (錯卦)'],
+['Phản quẻ ','Inverse hexagram '],['Đối quẻ ','Opposite hexagram '],
+[' — quẻ đảo ngược, đọc lục hào từ trên xuống: cho thấy sự việc khi nhìn từ phía đối lập, thế cục lộn ngược, hoặc diễn biến khi thời thế đổi chiều. ',' — formed by reversing the six-line order; it shows the matter from the opposite perspective, a reversal of circumstances, or developments when the prevailing situation turns. '],
+[' — quẻ toàn phản, cả sáu hào đảo âm dương: thể hiện mặt tiềm ẩn, điều kiêng kị và phương hướng quay về khi đã đến cực thịnh.',' — formed by changing every Yin line to Yang and every Yang line to Yin; it reveals the latent aspect, cautions, and the direction of return when a condition reaches its extreme.'],
+['Phép Đắc Chính (當位) — Trật Tự Hào Vị','Correct Position (當位) — Line-Position Order'],
+['Hào đắc chính','A correctly positioned line'],['hào đắc chính','correctly positioned lines'],
+[' = dương tại vị dương (1-3-5) hoặc âm tại vị âm (2-4-6). Quẻ này có ',' = Yang in a Yang position (1, 3, 5) or Yin in a Yin position (2, 4, 6). This hexagram has '],
+[' — Trục này đo ngôi vị cấu trúc — khác với trục tuần không (thời gian) và trục tỷ lệ tin cậy (tổng hợp) bên dưới; ba số không so sánh trực tiếp với nhau.',' — This axis measures structural positional correctness. It is distinct from Decan Void (timing) and the composite confidence scale below; the three values are not directly comparable.'],
+['Bát Cung Kinh Phòng · Thế Ứng','Jing Fang Eight Palaces · Host and Corresponding Lines'],
+['Bát Cung Fear Phòng · Host and Corresponding Lines','Jing Fang Eight Palaces · Host and Corresponding Lines'],
+['Thuộc cung','Palace'],['Thế quẻ','Hexagram stage'],['hành ','Phase '],
+['Tiên Thiên Dịch Giải · Phục Hy (Bát Quái chiếu theo Phương Viên Đồ)','Earlier-Heaven Interpretation · Fu Xi (Eight Trigrams according to the Square-and-Circle Diagram)'],
+['Earlier-Heaven I Ching interpretation · Fu Xi (Eight Trigrams chiếu theo Phương Viên Đồ)','Earlier-Heaven Interpretation · Fu Xi (Eight Trigrams according to the Square-and-Circle Diagram)'],
+['Hậu Thiên Dịch Giải · Văn Vương','Later-Heaven Interpretation · King Wen'],
+['Later Heaven Dịch Giải · Văn Vương','Later-Heaven Interpretation · King Wen'],
+['Lục Giáp Bốc Thánh · Kinh Phòng','Six-Jia Sacred Divination · Jing Fang'],
+['Lục Jia Bốc Thánh · Fear Phòng','Six-Jia Sacred Divination · Jing Fang'],
+['Hợp · Xung · Hại · Hình (hào với nhật nguyệt)','Combination · Clash · Harm · Punishment (lines in relation to day and month)'],
+['Combination · Clash · Hại · Hình (line với nhật nguyệt)','Combination · Clash · Harm · Punishment (lines in relation to day and month)'],
+['Ứng Kỳ (đoán thời điểm ứng nghiệm)','Timing of Fulfillment (estimating when the indication manifests)'],
+['Timing of the Outcome (đoán thời điểm ứng nghiệm)','Timing of Fulfillment (estimating when the indication manifests)'],
+['Số Powerball Life Từ Quẻ','Powerball Numbers Derived from the Hexagram'],
+['Reality and Void Method (實虛法) — Decan Void','Reality and Void Method (實虛法) — Decan Void'],
+['Phản Quẻ','Inverse Hexagram'],['Đối Quẻ','Opposite Hexagram'],['Trật Tự Hào Vị','Line-Position Order'],
+['Phương Viên Đồ','Square-and-Circle Diagram'],['Văn Vương','King Wen'],['Kinh Phòng','Jing Fang'],
+['Dịch Giải','Interpretation'],['Bốc Thánh','Sacred Divination'],['Hại','Harm'],['Hình','Punishment'],
+['hào với nhật nguyệt','lines in relation to day and month'],['đoán thời điểm ứng nghiệm','estimating when the indication manifests'],
+['Từ Quẻ','from the Hexagram'],['quẻ','hexagram'],['hào','line'],['âm dương','Yin and Yang'],['Âm and Yang','Yin and Yang']
+];
+function en(){return ((document.documentElement.lang||window.currentLang||window.KD_LANG||'vi')+'').toLowerCase().slice(0,2)==='en';}
+function skip(el){return !el||/^(SCRIPT|STYLE|TEXTAREA|CODE|PRE)$/.test(el.tagName)||el.closest('[data-i18n-preserve="true"]');}
+function applyText(n){if(!n||n.nodeType!==3||skip(n.parentElement))return; if(en()){if(n.__p61vi==null)n.__p61vi=n.nodeValue;var z=n.__p61vi;for(var i=0;i<MAP.length;i++)z=z.split(MAP[i][0]).join(MAP[i][1]);if(z!==n.nodeValue)n.nodeValue=z;}else if(n.__p61vi!=null){n.nodeValue=n.__p61vi;n.__p61vi=null;}}
+function walk(root){var w=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT);var n;while(n=w.nextNode())applyText(n);}
+var busy=false;function run(){if(busy)return;busy=true;try{walk(document.body);}finally{busy=false;}}
+new MutationObserver(function(ms){if(!en())return;for(var i=0;i<ms.length;i++){for(var j=0;j<ms[i].addedNodes.length;j++){var n=ms[i].addedNodes[j];if(n.nodeType===3)applyText(n);else if(n.nodeType===1)walk(n);}}}).observe(document.documentElement,{childList:true,subtree:true});
+document.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('button,[role="button"],.lang,.language,[data-lang]'))setTimeout(run,0);},true);
+window.addEventListener('load',function(){setTimeout(run,80);});setTimeout(run,120);setTimeout(run,500);
+})();
+</script>\n
+<!-- ===== PHASE 62: STRICT ENGLISH-ONLY DISPLAY ===== -->
+<script id="kd-phase62-english-only">
+(function(){'use strict';
+var VI=/[ăâđêôơưĂÂĐÊÔƠƯáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵÁÀẢÃẠẤẦẨẪẬẮẰẲẴẶÉÈẺẼẸẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌỐỒỔỖỘỚỜỞỠỢÚÙỦŨỤỨỪỬỮỰÝỲỶỸỴ]/;
+var COMMON=/\b(?:quẻ|hào|phép|phản|đối|lục|bát|cung|thiên|hậu|tiên|dịch|giải|văn|vương|kinh|phòng|hợp|xung|hại|hình|ngày|tháng|giờ|âm|dương|thế|ứng|từ|đoán|thời|điểm|nghiệm|chiếu|theo|phương|viên|đồ|số|chính|trật|tự|vị|thuộc|hành|chủ|biến|sinh|khắc|ngũ|quỷ|cốc|gieo|chiêm|luận|cổ|pháp)\b/i;
+var hidden=new WeakMap(), timer=0, busy=false;
+function isEN(){try{return ((document.documentElement.lang||'').toLowerCase().slice(0,2)==='en')||localStorage.getItem('kd_language')==='en'||localStorage.getItem('kd_lang')==='en'||localStorage.getItem('lang')==='en';}catch(e){return (document.documentElement.lang||'').toLowerCase().slice(0,2)==='en';}}
+function protectedEl(el){return !el||/^(SCRIPT|STYLE|NOSCRIPT|CODE|PRE|SVG|PATH)$/i.test(el.tagName||'')||(el.closest&&el.closest('[data-i18n-preserve="true"],[data-i18n-protect="true"],[data-kd-classical-source],[data-kd-no-translate],[contenteditable="true"]'));}
+function residual(t){t=(t||'').replace(/\s+/g,' ').trim();return !!t&&(VI.test(t)||COMMON.test(t));}
+function restore(){document.querySelectorAll('[data-p62-hidden="1"]').forEach(function(el){var x=hidden.get(el);if(x){el.style.display=x.display;el.style.visibility=x.visibility;}else{el.style.removeProperty('display');el.style.removeProperty('visibility');}el.removeAttribute('data-p62-hidden');});}
+function scrub(){if(busy)return;busy=true;try{
+  if(!isEN()){restore();return;}
+  if(window.KD_PHASE60&&KD_PHASE60.apply)try{KD_PHASE60.apply();}catch(e){}
+  var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n,targets=[];
+  while((n=w.nextNode())){var el=n.parentElement;if(protectedEl(el))continue;var t=n.nodeValue||'';if(!residual(t))continue;
+    /* Never hide the language controls themselves. */
+    if(el.closest&&el.closest('[data-lang],.lang,.language,.language-switch,.lang-switch,#langToggle,#languageToggle'))continue;
+    targets.push(el);
+  }
+  targets.forEach(function(el){if(el.getAttribute('data-p62-hidden')==='1')return;hidden.set(el,{display:el.style.display,visibility:el.style.visibility});el.style.setProperty('display','none','important');el.setAttribute('data-p62-hidden','1');});
+}finally{busy=false;}}
+function schedule(){clearTimeout(timer);timer=setTimeout(scrub,120);}
+new MutationObserver(function(){schedule();}).observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['lang','class','open']});
+document.addEventListener('click',function(){setTimeout(schedule,0);setTimeout(schedule,250);setTimeout(schedule,800);},true);
+window.addEventListener('load',function(){setTimeout(schedule,100);setTimeout(schedule,700);});
+window.KD_PHASE62={englishOnly:true,calculationCodeModified:false,dataTablesModified:false,apply:scrub};
+setTimeout(schedule,150);setTimeout(schedule,1000);
+})();
+</script>
+<!-- ===== END PHASE 62 ===== -->
 </body></html>
