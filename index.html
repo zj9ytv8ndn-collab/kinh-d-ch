@@ -1274,141 +1274,7 @@ function shareBatTuPNG(tt,nc,name){
 function exportHTML(title,bodyHtml){
  try{
  var css='body{font-family:serif;max-width:760px;margin:24px auto;padding:0 16px;color:#1c1a12;background:#fdfaf2;line-height:1.65}h1{font-size:22px;border-bottom:2px solid #b8942a;padding-bottom:8px}h2,h3{color:#7a5c10}table{border-collapse:collapse;width:100%}td,th{border:1px solid #c9b98a;padding:5px 8px}img,svg{max-width:100%}.card{border:1px solid #d8c894;border-radius:10px;padding:10px 14px;margin:10px 0}@media print{body{margin:0;max-width:none;background:#fff}.card{break-inside:avoid}button{display:none}}';
- var doc='<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><title>'+esc(title)+'</title><style>'+css+'</style></head><body><h1>'+esc(title)+'</h1>'+bodyHtml+'<hr><p style="font-size:12px;color:#777">Xuất từ ứng dụng Kinh Dịch 64 Quẻ · '+new Date().toLocaleString('vi-VN')+' — nội dung mang tính chiêm nghiệm tham khảo.</p>'+'
-<!-- ===== PHASE 44: LONG-FORM GUIDANCE / ACADEMIC UI BILINGUAL ===== -->
-<script id="kd-phase44-longform-guidance-bilingual">
-(function(){'use strict';
-var L={
-'Kinh Dịch 64 Quẻ — Bói Dịch, Hà Đồ Lạc Thư':'I Ching — 64 Hexagrams · Divination · He Tu & Luo Shu',
-'Thái Cực sinh Lưỡng Nghi · Lưỡng Nghi sinh Tứ Tượng · Tứ Tượng sinh Bát Quải':'Taiji gives rise to the Two Modes; the Two Modes give rise to the Four Images; the Four Images give rise to the Eight Trigrams.',
-'Luận giải 64 quẻ theo Hà Đồ & Lạc Thư':'Interpret the 64 hexagrams through He Tu and Luo Shu principles.',
-'Tịnh tâm, buông mọi tạp niệm, an tĩnh nghĩ về điều muốn hỏi. Chọn một trong ba phép chiêm cổ, thành khẩn mà vấn — Vô cực sinh Thái Cực, khí động mà tượng hiện.':'Quiet the mind, release distracting thoughts, and calmly focus on the matter you wish to ask about. Choose one of the traditional divination methods and inquire sincerely — from the Limitless arises Taiji; when qi moves, the image appears.',
-'Phép Kinh Dịch truyền thống: ba đồng xu gieo sáu lần, hào thành từ dưới lên, hào lão biến mà quẻ thành.':'Traditional I Ching method: cast three coins six times. Lines are formed from bottom to top; old yin and old yang are changing lines that transform the hexagram.',
-'Quẻ sẽ tự gieo liên tiếp 6 lần sau khi bấm nút — bạn chỉ cần tịnh tâm quán tưởng câu hỏi.':'After you press the button, the app will automatically cast six rounds in sequence; simply keep your mind settled on the question.',
-'Quy ước: mặt Ngửa = 3 (Dương) · mặt Sấp = 2 (Âm). Tổng ba xu:':'Convention: Heads = 3 (Yang) · Tails = 2 (Yin). The sum of the three coins gives:',
-'6 = Lão Âm (âm động) · 7 = Thiếu Dương · 8 = Thiếu Âm · 9 = Lão Dương (dương động)':'6 = Old Yin (changing yin) · 7 = Young Yang · 8 = Young Yin · 9 = Old Yang (changing yang)',
-'— đúng thứ tự hào thành từ dưới lên.':'— enter the lines in their proper order from bottom to top.',
-'Chi số: 1 Tý · 2 Sửu · 3 Dần · 4 Mão · 5 Thìn · 6 Tỵ · 7 Ngọ · 8 Mùi · 9 Thân · 10 Dậu · 11 Tuất · 12 Hợi.':'Earthly-Branch numbers: 1 Zi · 2 Chou · 3 Yin · 4 Mao · 5 Chen · 6 Si · 7 Wu · 8 Wei · 9 Shen · 10 You · 11 Xu · 12 Hai.',
-'Nghĩ ba số bất kỳ (biển xe, số nhà, số vụt nghĩ ra...): số 1 → thượng quái (mod 8), số 2 → hạ quái (mod 8), tổng ba số → hào động (mod 6).':'Think of any three numbers (license plate, house number, numbers that suddenly come to mind, etc.): number 1 → upper trigram (mod 8), number 2 → lower trigram (mod 8), sum of all three → changing line (mod 6).',
-'Phép tự số: đếm chữ (bỏ khoảng trắng, dấu câu), chia câu làm đôi — nửa đầu → thượng quái (mod 8), nửa sau → hạ quái (mod 8), tổng số chữ → hào động (mod 6).':'Text-number method: count characters after removing spaces and punctuation, split the sentence in two — first half → upper trigram (mod 8), second half → lower trigram (mod 8), total character count → changing line (mod 6).',
-'Thiên thức → thượng quái (mod 8) · Địa thức → hạ quái (mod 8) · Nhân thức → hào động (mod 6). Gieo xu: ba đồng xu gieo ba lần, tổng mỗi lần làm một thức.':'Heaven number → upper trigram (mod 8) · Earth number → lower trigram (mod 8) · Human number → changing line (mod 6). Coin mode: cast three coins three times; each round total becomes one of the Three Powers values.',
-'🕯️ LỜi DẶN TRƯỚC KHI GIEO QUẺ — xin quẻ thế nào cho linh ứng':'🕯️ BEFORE CASTING — traditional guidance for approaching a divination',
-'rửa sạch tay, thắp nén hương nếu có; ngồi yên, thở sâu ba hơi, gạt bỏ tạp niệm — tâm loạn thì quẻ khó ứng.':'Wash your hands, light incense if you wish, sit quietly, take three deep breaths, and let distracting thoughts settle — traditional practice emphasizes a calm and focused mind.',
-'quẻ Mông dạy — lần đầu hỏi, quẻ trả lời; hỏi đi hỏi lại cùng một việc là coi thường, quẻ không còn ứng.':'The Hexagram Meng tradition teaches that the first sincere inquiry receives the answer; repeatedly asking the same question is discouraged.',
-'Một việc chỉ gieo một lần trong ngày.':'For the same matter, make only one casting in a day.',
-'quẻ chỉ vẽ đường, bước đi do chân mình; cát thì khiêm cung giữ lấy, hung thì tĩnh tu đức chờ thời.':'A hexagram points to a path; you still choose how to walk it. In favorable times remain humble; in difficult times cultivate composure and wait for better conditions.',
-'🗓 TRẠCH NHẬT — chọn ngày cho việc lớn':'🗓 DATE SELECTION — choose a date for an important undertaking',
-'Gợi ý từ khóa: tài lộc · hôn nhân · quan lộc · thị phi · quý nhân · tiểu nhân · xuất hành · chờ thời · cát · hung':'Suggested keywords: wealth · marriage · career · disputes · benefactors · difficult people · travel · timing · auspicious · inauspicious',
-'Thiên nhất sinh Thủy, địa lục thành chi — ở phương Bắc; địa nhị sinh Hỏa, thiên thất thành chi — ở phương Nam; thiên tam sinh Mộc, địa bát thành chi — ở phương Đông; địa tứ sinh Kim, thiên cửu thành chi — ở phương Tây; thiên ngũ sinh Thổ, địa thập thành chi — ở Trung Cung.':'Heaven One generates Water and Earth Six completes it in the North; Earth Two generates Fire and Heaven Seven completes it in the South; Heaven Three generates Wood and Earth Eight completes it in the East; Earth Four generates Metal and Heaven Nine completes it in the West; Heaven Five generates Earth and Earth Ten completes it at the Center.',
-'Càn 1 · Đoài 2 · Ly 3 · Chấn 4 · Tốn 5 · Khảm 6 · Cấn 7 · Khôn 8':'Qian 1 · Dui 2 · Li 3 · Zhen 4 · Xun 5 · Kan 6 · Gen 7 · Kun 8',
-'Sinh là khí tương tư, khắc là khí tương chế. Có sinh có khắc thì vạn vật điều hòa; sinh quá thì kiêu, khắc quá thì tổn. Luận quẻ phải xem thượng quái và hạ quái thuộc hành gì, sinh khắc ra sao, mới thấu được cát hung của quẻ.':'Generation is the qi of mutual support; control is the qi of mutual restraint. Balance between generation and control brings harmony: excessive generation can become indulgence, excessive control can become harm. In interpretation, examine the Five-Phase relation between the upper and lower trigrams to understand the hexagram’s favorable and difficult tendencies.',
-'Mỗi ngày một lá, rút theo ngày dương — cùng ngày thì cùng lá, dùng để chiêm nghiệm nhịp 24 giờ.':'One card per Gregorian day — the same date yields the same card, intended as a reflective theme for the 24-hour period.',
-'Chiêm tinh phương Tây — cung Mặt Trời (tropical zodiac) theo ngày sinh dương lịch: hành tinh chiếu lúc sinh quyết định thế mạnh tính cách, nguyên tố (Hỏa · Thổ · Phong · Thủy) quyết định cách hành động.':'Western astrology — the Sun sign in the tropical zodiac is determined from the Gregorian birth date; the sign and elemental grouping (Fire · Earth · Air · Water) are used here for traditional personality reflection.',
-'Bói bài phương Tây — 22 Đại Ẩn (Major Arcana) và 56 Tiểu Ẩn (Minor Arcana). Tịnh tâm, niệm thầm câu hỏi ba lần, chọn chủ đề và kiểu trải bài rồi rút.':'Western card divination — 22 Major Arcana and 56 Minor Arcana. Settle your mind, silently focus on the question, choose a topic and spread, then draw the cards.',
-'⚖ Pháp Lý · Quyền Riêng Tư · Điều Khoản':'⚖ Legal · Privacy · Terms',
-'Không thu thập, không lưu trữ, không chia sẻ':'No collection, storage, or sharing',
-'bất kỳ dữ liệu cá nhân nào với bất kỳ ai.':'of personal data with anyone.',
-'có tài khoản, quảng cáo, theo dõi (tracking), phân tích (analytics), cookie hay SDK bên thứ ba.':'There are no accounts, ads, tracking, analytics, cookies, or third-party SDKs.',
-'✅ Mọi dữ liệu (lịch sử gieo quẻ, lá số đã lưu, cài đặt giao diện) chỉ nằm trong bộ nhớ cục bộ':'✅ All data (casting history, saved charts, and interface settings) remains only in local device storage.',
-'và bạn có thể xóa toàn bộ bất cứ lúc nào.':'You can delete all of it at any time.',
-'chiêm nghiệm văn hóa, tham khảo và giải trí':'cultural reflection, reference, and entertainment',
-'1. Dữ liệu chúng tôi thu thập: KHÔNG CÓ':'1. Data we collect: NONE',
-'2. Dữ liệu lưu cục bộ trên thiết bị của bạn':'2. Data stored locally on your device',
-'Ứng dụng không chứa bất kỳ đoạn mã nào kết nối Internet; không máy chủ, không API, không đăng nhập, không thanh toán trong ứng dụng ngoài giao dịch mua ứng dụng do Apple xử lý trên App Store.':'The app contains no code that connects to the Internet: no server, no API, no login, and no in-app payment processing other than App Store transactions handled by Apple.',
-'4. Quyền của bạn theo luật các nước':'4. Your rights under applicable data-protection laws',
-'Ứng dụng không hướng nội dung đến trẻ em dưới 13 tuổi và không thu thập dữ liệu của trẻ em. Nội dung huyền học phù hợp người dùng từ 12 tuổi trở lên theo phân loại độ tuổi của App Store.':'The app is not directed at children under 13 and does not collect children’s data. Metaphysical content should be used in accordance with the age rating shown on the App Store.',
-'Ứng dụng không tích hợp bất kỳ dịch vụ, SDK, quảng cáo hay phân tích nào của bên thứ ba.':'The app does not integrate third-party services, SDKs, advertising, or analytics.',
-'Nội dung chỉ mang tính tham khảo văn hóa – triết học, không thay thế quyết định thực tế.':'Content is for cultural and philosophical reference only and does not replace real-world judgment or professional advice.',
-'Mọi thuật toán trong app đều truy về kinh văn cổ truyền, không tự biên:':'The app documents its traditional calculation methods against classical-source frameworks rather than presenting newly invented divination rules:',
-'𓆩 Đại Lục Nhâm — Lập Khóa Tam Truyền':'𓆩 Da Liu Ren — Four Lessons & Three Transmissions',
-'Đệ nhất thuật trong tam thức (Kỳ Môn quản địa, Lục Nhâm quản nhân sự) — chuyên đoán việc đời: tài lộc, hôn nhân, kiện tụng, xuất hành.':'One of the Three Arts: Qi Men traditionally emphasizes spatial and strategic timing, while Da Liu Ren emphasizes human affairs such as wealth, marriage, disputes, and travel.',
-'Để trống ngày giờ = lập khóa cho thời điểm hiện tại.':'Leave the date and time blank to generate the chart for the current moment.',
-'Thượng cổ đệ nhất thuật trong tam thức — quản thiên vận, quốc gia đại sự, thời vận cả năm. Nhập năm dương lịch để lập niên cục.':'Tai Yi is traditionally used for large-scale timing and annual cycles. Enter a Gregorian year to generate the annual configuration.',
-'Nhập giờ sinh dương lịch (giờ Việt Nam). Tháng an theo tiết khí — lập xuân mở đầu tháng Dần; trụ giờ đổi theo can ngày (Ngũ Hổ Độn). Mang tính chiêm nghiệm văn hóa.':'Enter the Gregorian birth time (Vietnam time). Month pillars follow solar terms, with the Yin month beginning at Start of Spring; the hour stem follows the day stem by the traditional method. For cultural study and reflection.',
-'Giờ 23h–1h = giờ Tý. Để trống giờ = 0h (Tý).':'23:00–01:00 is the Zi hour. If the hour is left blank, 00:00 (Zi hour) is used.'
-};
-function tr(raw){var s=raw.trim();if(!s||!L[s])return raw;return raw.replace(s,L[s]);}
-function applyText(t,en){if(en){if(t.__p44vi==null)t.__p44vi=t.nodeValue;var z=tr(t.__p44vi);if(z!==t.__p44vi)t.nodeValue=z;}else if(t.__p44vi!=null){t.nodeValue=t.__p44vi;t.__p44vi=null;}}
-function apply(root){var en=(document.documentElement.lang||'vi').toLowerCase().indexOf('en')===0;root=root||document.body;if(!root)return;if(root.nodeType===3){applyText(root,en);return;}var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),n,a=[];while((n=w.nextNode()))a.push(n);a.forEach(function(t){applyText(t,en);});}
-var ob=new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==='childList')m.addedNodes.forEach(function(n){if(n.nodeType===1||n.nodeType===3)apply(n);});});});
-function start(){apply(document.body);ob.observe(document.body,{childList:true,subtree:true});}
-new MutationObserver(function(ms){if(ms.some(function(m){return m.attributeName==='lang';}))setTimeout(function(){apply(document.body);},0);}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
-window.KD_PHASE44={version:'2026-10-09-p44-longform-guidance',exactLongformEntries:Object.keys(L).length,scope:'Long-form guidance, study notes, privacy/legal summaries, and traditional-method explanations',calculationCodeModified:false};
-})();
-</script>
-<!-- ===== END PHASE 44 ===== -->
-
-
-
-<!-- ===== PHASE 50: FINAL BILINGUAL COVERAGE + SAFE CONTEXT FALLBACK ===== -->
-<script id="kd-phase50-final-bilingual-coverage">
-(function(){'use strict';
-var M={
-'Hỏa':'Fire','Thủy':'Water','Mộc':'Wood','Kim':'Metal','Thổ':'Earth',
-'Dương':'Yang','Âm':'Yin','Âm Dương':'Yin–Yang','Ngũ Hành':'Five Elements',
-'Càn':'Qian (Heaven)','Khôn':'Kun (Earth)','Chấn':'Zhen (Thunder)','Tốn':'Xun (Wind)','Khảm':'Kan (Water)','Ly':'Li (Fire)','Cấn':'Gen (Mountain)','Đoài':'Dui (Lake)',
-'Tài lộc':'Wealth & Finances','Sức khỏe':'Health','Tình duyên':'Love & Relationships','Kiện tụng':'Legal Disputes','Công danh':'Career & Status','Gia đạo':'Family Affairs','Học hành':'Study & Learning','Xuất hành':'Travel / Departure',
-'Cát':'Auspicious','cát':'auspicious','Hung':'Inauspicious','hung':'inauspicious','Đại Cát':'Great Auspice','ĐẠI CÁT':'GREAT AUSPICE','ĐẠi CÁT':'GREAT AUSPICE','Tiểu Cát':'Minor Auspice','Bình':'Neutral','Bình hòa':'Balanced / Neutral',
-'Tốt':'Favorable','Xấu':'Unfavorable','Rất tốt':'Highly Favorable','Rất xấu':'Highly Unfavorable','Trung bình':'Moderate',
-'Năm':'Year','Tháng':'Month','Ngày':'Day','Giờ':'Hour','Thời gian':'Time','Kết quả':'Result','Luận giải':'Interpretation','Chi tiết':'Details','Tổng quan':'Overview',
-'Dụng thần':'Useful Deity','dụng thần':'useful deity','Hào':'Line','hào':'line','Sơ':'First','Thượng':'Top','thượng':'top',
-'Thiên Can':'Heavenly Stems','Địa Chi':'Earthly Branches','Can Chi':'Stem–Branch','Nạp Âm':'Na Yin','Mệnh quái':'Life Trigram','Cung phi':'Life Gua',
-'Tương sinh':'Generating Cycle','Tương khắc':'Controlling Cycle','Sinh':'Generates','Khắc':'Controls','Vượng':'Prosperous','Suy':'Declining','Mộ':'Tomb','Tuyệt':'Extinction',
-'Không Vong':'Void','Tuần Không':'Decade Void','Nguyệt Phá':'Month Breaker','Nhật Phá':'Day Breaker','Xung':'Clash','Hợp':'Combination','Tam Hợp':'Three Harmony','Lục Xung':'Six Clashes',
-'Động':'Changing','Tĩnh':'Static','Hóa':'Transforms to','Hóa tiến':'Advancing Transformation','Hóa thoái':'Retreating Transformation','Phục ngâm':'Fu Yin','Phản ngâm':'Fan Yin',
-'Bản quẻ':'Primary Hexagram','Biến quẻ':'Changed Hexagram','Hỗ quẻ':'Nuclear Hexagram','Quẻ chủ':'Primary Hexagram','Quẻ biến':'Changed Hexagram','Quẻ hỗ':'Nuclear Hexagram',
-'Thế':'Self','Ứng':'Other','Lục Thân':'Six Relations','Lục Thần':'Six Spirits','Nguyệt kiến':'Month Commander','Nhật thần':'Day Spirit',
-'Phương vị':'Direction','Đông phương':'East','Tây phương':'West','Nam phương':'South','Bắc phương':'North','Trung tâm':'Center',
-'Bát Quái':'Eight Trigrams','Tiên Thiên':'Earlier Heaven','Hậu Thiên':'Later Heaven','Hà Đồ':'He Tu Diagram','Lạc Thư':'Luo Shu',
-'Tiết khí':'Solar Term','Âm lịch':'Lunar Calendar','Dương lịch':'Gregorian Calendar','Giờ địa phương':'Local Time','Múi giờ':'Time Zone',
-'Lưu niên':'Annual Transit','Đại vận':'Major Luck Cycle','Tiểu vận':'Minor Luck Cycle','Lưu nguyệt':'Monthly Transit','Lưu nhật':'Daily Transit',
-'Cung Mệnh':'Life Palace','Cung Thân':'Body Palace','Mệnh chủ':'Life Ruler','Thân chủ':'Body Ruler',
-'Chính tinh':'Major Star','Phụ tinh':'Auxiliary Star','Cát tinh':'Auspicious Star','Hung tinh':'Inauspicious Star','Miếu':'Exalted','Vượng địa':'Prosperous','Đắc địa':'Well Placed','Hãm địa':'Fallen',
-'Khai':'Open','Hưu':'Rest','Sinh':'Life','Thương':'Injury','Đỗ':'Delusion','Cảnh':'Scenery','Tử':'Death','Kinh':'Fear',
-'Bát Môn':'Eight Gates','Cửu Tinh':'Nine Stars','Bát Thần':'Eight Deities','Cửu Cung':'Nine Palaces',
-'Âm độn':'Yin Dun','Dương độn':'Yang Dun','Trực Sử':'Chief Gate','Trực Phù':'Chief Deity',
-'Thái Ất':'Taiyi','Lục Nhâm':'Liu Ren','Kỳ Môn Độn Giáp':'Qi Men Dun Jia','Tử Vi Đẩu Số':'Zi Wei Dou Shu','Bát Tự':'BaZi / Four Pillars','Mai Hoa Dịch Số':'Plum Blossom Numerology',
-'Lưu ý':'Note','Cảnh báo':'Warning','Tham khảo':'Reference','Nguồn':'Source','Phương pháp':'Method','Công thức':'Formula','Học thuật':'Academic Notes','Cổ pháp':'Classical Method',
-'Lưu':'Save','Xóa':'Delete','Đóng':'Close','Mở':'Open','Quay lại':'Back','Tiếp tục':'Continue','Tính lại':'Recalculate','Làm mới':'Refresh','Sao chép':'Copy','Xuất':'Export','In':'Print','Chia sẻ':'Share'
-};
-var VI=/[ăâđêôơưĂÂĐÊÔƠƯàáảãạèéẻẽẹìíỉĩịòóỏõọùúủũụỳýỷỹỵÀÁẢÃẠÈÉẺẼẸÌÍỈĨỊÒÓỎÕỌÙÚỦŨỤỲÝỶỸỴ]/;
-var EX='script,style,code,pre,textarea,.han,.hanzi,.chinese,.classical-source,[data-no-i18n]';
-var ATTR=['placeholder','title','aria-label','alt'];
-var keys=Object.keys(M).sort(function(a,b){return b.length-a.length;});
-function en(){return (document.documentElement.lang||localStorage.getItem('lang')||localStorage.getItem('kd_lang')||'vi').toLowerCase().indexOf('en')===0;}
-function skip(n){var e=n.nodeType===1?n:n.parentElement;return !!(e&&e.closest&&e.closest(EX));}
-function context(n){var e=n.nodeType===1?n:n.parentElement;if(!e)return '';var z=e.closest('[id],[class],section,article,form')||e;return ((z.id||'')+' '+(typeof z.className==='string'?z.className:'')+' '+(z.getAttribute&&z.getAttribute('data-module')||'')).toLowerCase();}
-function safeReplace(s,n){if(!en()||!VI.test(s))return s;var out=s,c=context(n);
- // Protect classical/source-heavy contexts and free-form long prose: Phase 50 is UI/runtime fallback, not a classical-text translator.
- if(/classical|kinhvan|kinh-văn|source|hanvan|hán-văn/.test(c))return s;
- for(var i=0;i<keys.length;i++){
-   var k=keys[i];
-   if(k.length<=2 && s.trim()!==k)continue;
-   // Context-sensitive single-character/common tokens.
-   if((k==='Mệnh'||k==='Thân'||k==='Nam') && s.trim()!==k)continue;
-   if(out.indexOf(k)>=0)out=out.split(k).join(M[k]);
- }
- // Frequently generated grammar fragments, only in UI/result contexts.
- if(/result|ketqua|kết-quả|luan|luận|panel|card|summary|detail|chart|table|grid|cell|row/.test(c)){
-   out=out.replace(/\btại\b/g,'at').replace(/\bthuộc\b/g,'belongs to').replace(/\btheo\b/g,'according to').replace(/\bvà\b/g,'and');
- }
- return out;
-}
-function patchText(n){if(!n||n.nodeType!==3||skip(n))return;var s=n.nodeValue;if(!s||!VI.test(s))return;if(en()){if(n.__p50vi===undefined)n.__p50vi=s;var x=safeReplace(n.__p50vi,n);if(x!==s)n.nodeValue=x;}else if(n.__p50vi!==undefined){n.nodeValue=n.__p50vi;delete n.__p50vi;}}
-function patchAttr(el,a){if(skip(el)||!el.getAttribute)return;var v=el.getAttribute(a);if(!v||!VI.test(v))return;var k='__p50_'+a;if(en()){if(el[k]===undefined)el[k]=v;var x=safeReplace(el[k],el);if(x!==v)el.setAttribute(a,x);}else if(el[k]!==undefined){el.setAttribute(a,el[k]);delete el[k];}}
-function walk(root){if(!root)return;if(root.nodeType===3){patchText(root);return;}var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),n;while((n=w.nextNode()))patchText(n);if(root.nodeType===1)for(var j=0;j<ATTR.length;j++)patchAttr(root,ATTR[j]);var es=root.querySelectorAll?root.querySelectorAll('*'):[];for(var i=0;i<es.length;i++)for(var j=0;j<ATTR.length;j++)patchAttr(es[i],ATTR[j]);}
-var raf=0;function stabilize(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;walk(document.body);});}
-function audit(){var r={language:en()?'en':'vi',visibleVietnamese:0,attributesVietnamese:0,shortUiResiduals:0,longProseResiduals:0,samples:[]};if(!document.body)return r;var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n;while((n=w.nextNode())){if(skip(n)||!VI.test(n.nodeValue||''))continue;var e=n.parentElement;if(e&&e.offsetParent===null)continue;var t=(n.nodeValue||'').trim();if(!t)continue;r.visibleVietnamese++;if(t.length<=80)r.shortUiResiduals++;else r.longProseResiduals++;if(r.samples.length<40)r.samples.push(t.slice(0,180));}document.querySelectorAll('*').forEach(function(el){if(skip(el))return;ATTR.forEach(function(a){var v=el.getAttribute(a);if(v&&VI.test(v))r.attributesVietnamese++;});});r.totalResiduals=r.visibleVietnamese+r.attributesVietnamese;window.KD_PHASE50.lastAudit=r;document.documentElement.setAttribute('data-kd-p50-vi-residual',String(r.totalResiduals));return r;}
-var mo=new MutationObserver(function(ms){if(ms.some(function(m){return m.type==='childList'||m.type==='characterData'||m.type==='attributes';}))stabilize();});
-function start(){walk(document.body);mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTR});new MutationObserver(stabilize).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});stabilize();}
-window.KD_PHASE50={version:'2026-10-09-p50-final-bilingual-coverage',entries:Object.keys(M).length,scope:'UI/runtime fallback only; classical Chinese/source text protected',reversibleToVietnamese:true,calculationCodeModified:false,lastAudit:null,audit:audit,stabilize:stabilize};
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
-})();
-</script>
-<!-- ===== END PHASE 50 ===== -->
-
-</body></html>';
+ var doc='<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><title>'+esc(title)+'</title><style>'+css+'</style></head><body><h1>'+esc(title)+'</h1>'+bodyHtml+'<hr><p style="font-size:12px;color:#777">Xuất từ ứng dụng Kinh Dịch 64 Quẻ · '+new Date().toLocaleString('vi-VN')+' — nội dung mang tính chiêm nghiệm tham khảo.</p></body></html>';
  var blob=new Blob([doc],{type:'text/html;charset=utf-8'});
  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
  a.download=title.replace(/[^\w\u00C0-\u1EF9]+/g,'_').slice(0,60)+'.html';
@@ -16318,5 +16184,159 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   window.KD_PHASE56={version:VERSION,entries:Object.keys(EXACT).length,apply:function(){apply(document.body);return releaseCandidate();},audit:audit,phaseManifest:phaseManifest,releaseCandidate:releaseCandidate,validate:validate,calculationCodeModified:false,sourceDataModified:false,scope:'Release-candidate consolidation, residual UI variants, phase manifest, and final validation only'};
 })();
 
+</script>
+
+<!-- ===== PHASE 44: LONG-FORM GUIDANCE / ACADEMIC UI BILINGUAL ===== -->
+<script id="kd-phase44-longform-guidance-bilingual">
+(function(){'use strict';
+var L={
+'Kinh Dịch 64 Quẻ — Bói Dịch, Hà Đồ Lạc Thư':'I Ching — 64 Hexagrams · Divination · He Tu & Luo Shu',
+'Thái Cực sinh Lưỡng Nghi · Lưỡng Nghi sinh Tứ Tượng · Tứ Tượng sinh Bát Quải':'Taiji gives rise to the Two Modes; the Two Modes give rise to the Four Images; the Four Images give rise to the Eight Trigrams.',
+'Luận giải 64 quẻ theo Hà Đồ & Lạc Thư':'Interpret the 64 hexagrams through He Tu and Luo Shu principles.',
+'Tịnh tâm, buông mọi tạp niệm, an tĩnh nghĩ về điều muốn hỏi. Chọn một trong ba phép chiêm cổ, thành khẩn mà vấn — Vô cực sinh Thái Cực, khí động mà tượng hiện.':'Quiet the mind, release distracting thoughts, and calmly focus on the matter you wish to ask about. Choose one of the traditional divination methods and inquire sincerely — from the Limitless arises Taiji; when qi moves, the image appears.',
+'Phép Kinh Dịch truyền thống: ba đồng xu gieo sáu lần, hào thành từ dưới lên, hào lão biến mà quẻ thành.':'Traditional I Ching method: cast three coins six times. Lines are formed from bottom to top; old yin and old yang are changing lines that transform the hexagram.',
+'Quẻ sẽ tự gieo liên tiếp 6 lần sau khi bấm nút — bạn chỉ cần tịnh tâm quán tưởng câu hỏi.':'After you press the button, the app will automatically cast six rounds in sequence; simply keep your mind settled on the question.',
+'Quy ước: mặt Ngửa = 3 (Dương) · mặt Sấp = 2 (Âm). Tổng ba xu:':'Convention: Heads = 3 (Yang) · Tails = 2 (Yin). The sum of the three coins gives:',
+'6 = Lão Âm (âm động) · 7 = Thiếu Dương · 8 = Thiếu Âm · 9 = Lão Dương (dương động)':'6 = Old Yin (changing yin) · 7 = Young Yang · 8 = Young Yin · 9 = Old Yang (changing yang)',
+'— đúng thứ tự hào thành từ dưới lên.':'— enter the lines in their proper order from bottom to top.',
+'Chi số: 1 Tý · 2 Sửu · 3 Dần · 4 Mão · 5 Thìn · 6 Tỵ · 7 Ngọ · 8 Mùi · 9 Thân · 10 Dậu · 11 Tuất · 12 Hợi.':'Earthly-Branch numbers: 1 Zi · 2 Chou · 3 Yin · 4 Mao · 5 Chen · 6 Si · 7 Wu · 8 Wei · 9 Shen · 10 You · 11 Xu · 12 Hai.',
+'Nghĩ ba số bất kỳ (biển xe, số nhà, số vụt nghĩ ra...): số 1 → thượng quái (mod 8), số 2 → hạ quái (mod 8), tổng ba số → hào động (mod 6).':'Think of any three numbers (license plate, house number, numbers that suddenly come to mind, etc.): number 1 → upper trigram (mod 8), number 2 → lower trigram (mod 8), sum of all three → changing line (mod 6).',
+'Phép tự số: đếm chữ (bỏ khoảng trắng, dấu câu), chia câu làm đôi — nửa đầu → thượng quái (mod 8), nửa sau → hạ quái (mod 8), tổng số chữ → hào động (mod 6).':'Text-number method: count characters after removing spaces and punctuation, split the sentence in two — first half → upper trigram (mod 8), second half → lower trigram (mod 8), total character count → changing line (mod 6).',
+'Thiên thức → thượng quái (mod 8) · Địa thức → hạ quái (mod 8) · Nhân thức → hào động (mod 6). Gieo xu: ba đồng xu gieo ba lần, tổng mỗi lần làm một thức.':'Heaven number → upper trigram (mod 8) · Earth number → lower trigram (mod 8) · Human number → changing line (mod 6). Coin mode: cast three coins three times; each round total becomes one of the Three Powers values.',
+'🕯️ LỜi DẶN TRƯỚC KHI GIEO QUẺ — xin quẻ thế nào cho linh ứng':'🕯️ BEFORE CASTING — traditional guidance for approaching a divination',
+'rửa sạch tay, thắp nén hương nếu có; ngồi yên, thở sâu ba hơi, gạt bỏ tạp niệm — tâm loạn thì quẻ khó ứng.':'Wash your hands, light incense if you wish, sit quietly, take three deep breaths, and let distracting thoughts settle — traditional practice emphasizes a calm and focused mind.',
+'quẻ Mông dạy — lần đầu hỏi, quẻ trả lời; hỏi đi hỏi lại cùng một việc là coi thường, quẻ không còn ứng.':'The Hexagram Meng tradition teaches that the first sincere inquiry receives the answer; repeatedly asking the same question is discouraged.',
+'Một việc chỉ gieo một lần trong ngày.':'For the same matter, make only one casting in a day.',
+'quẻ chỉ vẽ đường, bước đi do chân mình; cát thì khiêm cung giữ lấy, hung thì tĩnh tu đức chờ thời.':'A hexagram points to a path; you still choose how to walk it. In favorable times remain humble; in difficult times cultivate composure and wait for better conditions.',
+'🗓 TRẠCH NHẬT — chọn ngày cho việc lớn':'🗓 DATE SELECTION — choose a date for an important undertaking',
+'Gợi ý từ khóa: tài lộc · hôn nhân · quan lộc · thị phi · quý nhân · tiểu nhân · xuất hành · chờ thời · cát · hung':'Suggested keywords: wealth · marriage · career · disputes · benefactors · difficult people · travel · timing · auspicious · inauspicious',
+'Thiên nhất sinh Thủy, địa lục thành chi — ở phương Bắc; địa nhị sinh Hỏa, thiên thất thành chi — ở phương Nam; thiên tam sinh Mộc, địa bát thành chi — ở phương Đông; địa tứ sinh Kim, thiên cửu thành chi — ở phương Tây; thiên ngũ sinh Thổ, địa thập thành chi — ở Trung Cung.':'Heaven One generates Water and Earth Six completes it in the North; Earth Two generates Fire and Heaven Seven completes it in the South; Heaven Three generates Wood and Earth Eight completes it in the East; Earth Four generates Metal and Heaven Nine completes it in the West; Heaven Five generates Earth and Earth Ten completes it at the Center.',
+'Càn 1 · Đoài 2 · Ly 3 · Chấn 4 · Tốn 5 · Khảm 6 · Cấn 7 · Khôn 8':'Qian 1 · Dui 2 · Li 3 · Zhen 4 · Xun 5 · Kan 6 · Gen 7 · Kun 8',
+'Sinh là khí tương tư, khắc là khí tương chế. Có sinh có khắc thì vạn vật điều hòa; sinh quá thì kiêu, khắc quá thì tổn. Luận quẻ phải xem thượng quái và hạ quái thuộc hành gì, sinh khắc ra sao, mới thấu được cát hung của quẻ.':'Generation is the qi of mutual support; control is the qi of mutual restraint. Balance between generation and control brings harmony: excessive generation can become indulgence, excessive control can become harm. In interpretation, examine the Five-Phase relation between the upper and lower trigrams to understand the hexagram’s favorable and difficult tendencies.',
+'Mỗi ngày một lá, rút theo ngày dương — cùng ngày thì cùng lá, dùng để chiêm nghiệm nhịp 24 giờ.':'One card per Gregorian day — the same date yields the same card, intended as a reflective theme for the 24-hour period.',
+'Chiêm tinh phương Tây — cung Mặt Trời (tropical zodiac) theo ngày sinh dương lịch: hành tinh chiếu lúc sinh quyết định thế mạnh tính cách, nguyên tố (Hỏa · Thổ · Phong · Thủy) quyết định cách hành động.':'Western astrology — the Sun sign in the tropical zodiac is determined from the Gregorian birth date; the sign and elemental grouping (Fire · Earth · Air · Water) are used here for traditional personality reflection.',
+'Bói bài phương Tây — 22 Đại Ẩn (Major Arcana) và 56 Tiểu Ẩn (Minor Arcana). Tịnh tâm, niệm thầm câu hỏi ba lần, chọn chủ đề và kiểu trải bài rồi rút.':'Western card divination — 22 Major Arcana and 56 Minor Arcana. Settle your mind, silently focus on the question, choose a topic and spread, then draw the cards.',
+'⚖ Pháp Lý · Quyền Riêng Tư · Điều Khoản':'⚖ Legal · Privacy · Terms',
+'Không thu thập, không lưu trữ, không chia sẻ':'No collection, storage, or sharing',
+'bất kỳ dữ liệu cá nhân nào với bất kỳ ai.':'of personal data with anyone.',
+'có tài khoản, quảng cáo, theo dõi (tracking), phân tích (analytics), cookie hay SDK bên thứ ba.':'There are no accounts, ads, tracking, analytics, cookies, or third-party SDKs.',
+'✅ Mọi dữ liệu (lịch sử gieo quẻ, lá số đã lưu, cài đặt giao diện) chỉ nằm trong bộ nhớ cục bộ':'✅ All data (casting history, saved charts, and interface settings) remains only in local device storage.',
+'và bạn có thể xóa toàn bộ bất cứ lúc nào.':'You can delete all of it at any time.',
+'chiêm nghiệm văn hóa, tham khảo và giải trí':'cultural reflection, reference, and entertainment',
+'1. Dữ liệu chúng tôi thu thập: KHÔNG CÓ':'1. Data we collect: NONE',
+'2. Dữ liệu lưu cục bộ trên thiết bị của bạn':'2. Data stored locally on your device',
+'Ứng dụng không chứa bất kỳ đoạn mã nào kết nối Internet; không máy chủ, không API, không đăng nhập, không thanh toán trong ứng dụng ngoài giao dịch mua ứng dụng do Apple xử lý trên App Store.':'The app contains no code that connects to the Internet: no server, no API, no login, and no in-app payment processing other than App Store transactions handled by Apple.',
+'4. Quyền của bạn theo luật các nước':'4. Your rights under applicable data-protection laws',
+'Ứng dụng không hướng nội dung đến trẻ em dưới 13 tuổi và không thu thập dữ liệu của trẻ em. Nội dung huyền học phù hợp người dùng từ 12 tuổi trở lên theo phân loại độ tuổi của App Store.':'The app is not directed at children under 13 and does not collect children’s data. Metaphysical content should be used in accordance with the age rating shown on the App Store.',
+'Ứng dụng không tích hợp bất kỳ dịch vụ, SDK, quảng cáo hay phân tích nào của bên thứ ba.':'The app does not integrate third-party services, SDKs, advertising, or analytics.',
+'Nội dung chỉ mang tính tham khảo văn hóa – triết học, không thay thế quyết định thực tế.':'Content is for cultural and philosophical reference only and does not replace real-world judgment or professional advice.',
+'Mọi thuật toán trong app đều truy về kinh văn cổ truyền, không tự biên:':'The app documents its traditional calculation methods against classical-source frameworks rather than presenting newly invented divination rules:',
+'𓆩 Đại Lục Nhâm — Lập Khóa Tam Truyền':'𓆩 Da Liu Ren — Four Lessons & Three Transmissions',
+'Đệ nhất thuật trong tam thức (Kỳ Môn quản địa, Lục Nhâm quản nhân sự) — chuyên đoán việc đời: tài lộc, hôn nhân, kiện tụng, xuất hành.':'One of the Three Arts: Qi Men traditionally emphasizes spatial and strategic timing, while Da Liu Ren emphasizes human affairs such as wealth, marriage, disputes, and travel.',
+'Để trống ngày giờ = lập khóa cho thời điểm hiện tại.':'Leave the date and time blank to generate the chart for the current moment.',
+'Thượng cổ đệ nhất thuật trong tam thức — quản thiên vận, quốc gia đại sự, thời vận cả năm. Nhập năm dương lịch để lập niên cục.':'Tai Yi is traditionally used for large-scale timing and annual cycles. Enter a Gregorian year to generate the annual configuration.',
+'Nhập giờ sinh dương lịch (giờ Việt Nam). Tháng an theo tiết khí — lập xuân mở đầu tháng Dần; trụ giờ đổi theo can ngày (Ngũ Hổ Độn). Mang tính chiêm nghiệm văn hóa.':'Enter the Gregorian birth time (Vietnam time). Month pillars follow solar terms, with the Yin month beginning at Start of Spring; the hour stem follows the day stem by the traditional method. For cultural study and reflection.',
+'Giờ 23h–1h = giờ Tý. Để trống giờ = 0h (Tý).':'23:00–01:00 is the Zi hour. If the hour is left blank, 00:00 (Zi hour) is used.'
+};
+function tr(raw){var s=raw.trim();if(!s||!L[s])return raw;return raw.replace(s,L[s]);}
+function applyText(t,en){if(en){if(t.__p44vi==null)t.__p44vi=t.nodeValue;var z=tr(t.__p44vi);if(z!==t.__p44vi)t.nodeValue=z;}else if(t.__p44vi!=null){t.nodeValue=t.__p44vi;t.__p44vi=null;}}
+function apply(root){var en=(document.documentElement.lang||'vi').toLowerCase().indexOf('en')===0;root=root||document.body;if(!root)return;if(root.nodeType===3){applyText(root,en);return;}var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),n,a=[];while((n=w.nextNode()))a.push(n);a.forEach(function(t){applyText(t,en);});}
+var ob=new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==='childList')m.addedNodes.forEach(function(n){if(n.nodeType===1||n.nodeType===3)apply(n);});});});
+function start(){apply(document.body);ob.observe(document.body,{childList:true,subtree:true});}
+new MutationObserver(function(ms){if(ms.some(function(m){return m.attributeName==='lang';}))setTimeout(function(){apply(document.body);},0);}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+window.KD_PHASE44={version:'2026-10-09-p44-longform-guidance',exactLongformEntries:Object.keys(L).length,scope:'Long-form guidance, study notes, privacy/legal summaries, and traditional-method explanations',calculationCodeModified:false};
+})();
+</script>
+<!-- ===== END PHASE 44 ===== -->
+
+
+
+<!-- ===== PHASE 50: FINAL BILINGUAL COVERAGE + SAFE CONTEXT FALLBACK ===== -->
+<script id="kd-phase50-final-bilingual-coverage">
+(function(){'use strict';
+var M={
+'Hỏa':'Fire','Thủy':'Water','Mộc':'Wood','Kim':'Metal','Thổ':'Earth',
+'Dương':'Yang','Âm':'Yin','Âm Dương':'Yin–Yang','Ngũ Hành':'Five Elements',
+'Càn':'Qian (Heaven)','Khôn':'Kun (Earth)','Chấn':'Zhen (Thunder)','Tốn':'Xun (Wind)','Khảm':'Kan (Water)','Ly':'Li (Fire)','Cấn':'Gen (Mountain)','Đoài':'Dui (Lake)',
+'Tài lộc':'Wealth & Finances','Sức khỏe':'Health','Tình duyên':'Love & Relationships','Kiện tụng':'Legal Disputes','Công danh':'Career & Status','Gia đạo':'Family Affairs','Học hành':'Study & Learning','Xuất hành':'Travel / Departure',
+'Cát':'Auspicious','cát':'auspicious','Hung':'Inauspicious','hung':'inauspicious','Đại Cát':'Great Auspice','ĐẠI CÁT':'GREAT AUSPICE','ĐẠi CÁT':'GREAT AUSPICE','Tiểu Cát':'Minor Auspice','Bình':'Neutral','Bình hòa':'Balanced / Neutral',
+'Tốt':'Favorable','Xấu':'Unfavorable','Rất tốt':'Highly Favorable','Rất xấu':'Highly Unfavorable','Trung bình':'Moderate',
+'Năm':'Year','Tháng':'Month','Ngày':'Day','Giờ':'Hour','Thời gian':'Time','Kết quả':'Result','Luận giải':'Interpretation','Chi tiết':'Details','Tổng quan':'Overview',
+'Dụng thần':'Useful Deity','dụng thần':'useful deity','Hào':'Line','hào':'line','Sơ':'First','Thượng':'Top','thượng':'top',
+'Thiên Can':'Heavenly Stems','Địa Chi':'Earthly Branches','Can Chi':'Stem–Branch','Nạp Âm':'Na Yin','Mệnh quái':'Life Trigram','Cung phi':'Life Gua',
+'Tương sinh':'Generating Cycle','Tương khắc':'Controlling Cycle','Sinh':'Generates','Khắc':'Controls','Vượng':'Prosperous','Suy':'Declining','Mộ':'Tomb','Tuyệt':'Extinction',
+'Không Vong':'Void','Tuần Không':'Decade Void','Nguyệt Phá':'Month Breaker','Nhật Phá':'Day Breaker','Xung':'Clash','Hợp':'Combination','Tam Hợp':'Three Harmony','Lục Xung':'Six Clashes',
+'Động':'Changing','Tĩnh':'Static','Hóa':'Transforms to','Hóa tiến':'Advancing Transformation','Hóa thoái':'Retreating Transformation','Phục ngâm':'Fu Yin','Phản ngâm':'Fan Yin',
+'Bản quẻ':'Primary Hexagram','Biến quẻ':'Changed Hexagram','Hỗ quẻ':'Nuclear Hexagram','Quẻ chủ':'Primary Hexagram','Quẻ biến':'Changed Hexagram','Quẻ hỗ':'Nuclear Hexagram',
+'Thế':'Self','Ứng':'Other','Lục Thân':'Six Relations','Lục Thần':'Six Spirits','Nguyệt kiến':'Month Commander','Nhật thần':'Day Spirit',
+'Phương vị':'Direction','Đông phương':'East','Tây phương':'West','Nam phương':'South','Bắc phương':'North','Trung tâm':'Center',
+'Bát Quái':'Eight Trigrams','Tiên Thiên':'Earlier Heaven','Hậu Thiên':'Later Heaven','Hà Đồ':'He Tu Diagram','Lạc Thư':'Luo Shu',
+'Tiết khí':'Solar Term','Âm lịch':'Lunar Calendar','Dương lịch':'Gregorian Calendar','Giờ địa phương':'Local Time','Múi giờ':'Time Zone',
+'Lưu niên':'Annual Transit','Đại vận':'Major Luck Cycle','Tiểu vận':'Minor Luck Cycle','Lưu nguyệt':'Monthly Transit','Lưu nhật':'Daily Transit',
+'Cung Mệnh':'Life Palace','Cung Thân':'Body Palace','Mệnh chủ':'Life Ruler','Thân chủ':'Body Ruler',
+'Chính tinh':'Major Star','Phụ tinh':'Auxiliary Star','Cát tinh':'Auspicious Star','Hung tinh':'Inauspicious Star','Miếu':'Exalted','Vượng địa':'Prosperous','Đắc địa':'Well Placed','Hãm địa':'Fallen',
+'Khai':'Open','Hưu':'Rest','Sinh':'Life','Thương':'Injury','Đỗ':'Delusion','Cảnh':'Scenery','Tử':'Death','Kinh':'Fear',
+'Bát Môn':'Eight Gates','Cửu Tinh':'Nine Stars','Bát Thần':'Eight Deities','Cửu Cung':'Nine Palaces',
+'Âm độn':'Yin Dun','Dương độn':'Yang Dun','Trực Sử':'Chief Gate','Trực Phù':'Chief Deity',
+'Thái Ất':'Taiyi','Lục Nhâm':'Liu Ren','Kỳ Môn Độn Giáp':'Qi Men Dun Jia','Tử Vi Đẩu Số':'Zi Wei Dou Shu','Bát Tự':'BaZi / Four Pillars','Mai Hoa Dịch Số':'Plum Blossom Numerology',
+'Lưu ý':'Note','Cảnh báo':'Warning','Tham khảo':'Reference','Nguồn':'Source','Phương pháp':'Method','Công thức':'Formula','Học thuật':'Academic Notes','Cổ pháp':'Classical Method',
+'Lưu':'Save','Xóa':'Delete','Đóng':'Close','Mở':'Open','Quay lại':'Back','Tiếp tục':'Continue','Tính lại':'Recalculate','Làm mới':'Refresh','Sao chép':'Copy','Xuất':'Export','In':'Print','Chia sẻ':'Share'
+};
+var VI=/[ăâđêôơưĂÂĐÊÔƠƯàáảãạèéẻẽẹìíỉĩịòóỏõọùúủũụỳýỷỹỵÀÁẢÃẠÈÉẺẼẸÌÍỈĨỊÒÓỎÕỌÙÚỦŨỤỲÝỶỸỴ]/;
+var EX='script,style,code,pre,textarea,.han,.hanzi,.chinese,.classical-source,[data-no-i18n]';
+var ATTR=['placeholder','title','aria-label','alt'];
+var keys=Object.keys(M).sort(function(a,b){return b.length-a.length;});
+function en(){return (document.documentElement.lang||localStorage.getItem('lang')||localStorage.getItem('kd_lang')||'vi').toLowerCase().indexOf('en')===0;}
+function skip(n){var e=n.nodeType===1?n:n.parentElement;return !!(e&&e.closest&&e.closest(EX));}
+function context(n){var e=n.nodeType===1?n:n.parentElement;if(!e)return '';var z=e.closest('[id],[class],section,article,form')||e;return ((z.id||'')+' '+(typeof z.className==='string'?z.className:'')+' '+(z.getAttribute&&z.getAttribute('data-module')||'')).toLowerCase();}
+function safeReplace(s,n){if(!en()||!VI.test(s))return s;var out=s,c=context(n);
+ // Protect classical/source-heavy contexts and free-form long prose: Phase 50 is UI/runtime fallback, not a classical-text translator.
+ if(/classical|kinhvan|kinh-văn|source|hanvan|hán-văn/.test(c))return s;
+ for(var i=0;i<keys.length;i++){
+   var k=keys[i];
+   if(k.length<=2 && s.trim()!==k)continue;
+   // Context-sensitive single-character/common tokens.
+   if((k==='Mệnh'||k==='Thân'||k==='Nam') && s.trim()!==k)continue;
+   if(out.indexOf(k)>=0)out=out.split(k).join(M[k]);
+ }
+ // Frequently generated grammar fragments, only in UI/result contexts.
+ if(/result|ketqua|kết-quả|luan|luận|panel|card|summary|detail|chart|table|grid|cell|row/.test(c)){
+   out=out.replace(/\btại\b/g,'at').replace(/\bthuộc\b/g,'belongs to').replace(/\btheo\b/g,'according to').replace(/\bvà\b/g,'and');
+ }
+ return out;
+}
+function patchText(n){if(!n||n.nodeType!==3||skip(n))return;var s=n.nodeValue;if(!s||!VI.test(s))return;if(en()){if(n.__p50vi===undefined)n.__p50vi=s;var x=safeReplace(n.__p50vi,n);if(x!==s)n.nodeValue=x;}else if(n.__p50vi!==undefined){n.nodeValue=n.__p50vi;delete n.__p50vi;}}
+function patchAttr(el,a){if(skip(el)||!el.getAttribute)return;var v=el.getAttribute(a);if(!v||!VI.test(v))return;var k='__p50_'+a;if(en()){if(el[k]===undefined)el[k]=v;var x=safeReplace(el[k],el);if(x!==v)el.setAttribute(a,x);}else if(el[k]!==undefined){el.setAttribute(a,el[k]);delete el[k];}}
+function walk(root){if(!root)return;if(root.nodeType===3){patchText(root);return;}var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),n;while((n=w.nextNode()))patchText(n);if(root.nodeType===1)for(var j=0;j<ATTR.length;j++)patchAttr(root,ATTR[j]);var es=root.querySelectorAll?root.querySelectorAll('*'):[];for(var i=0;i<es.length;i++)for(var j=0;j<ATTR.length;j++)patchAttr(es[i],ATTR[j]);}
+var raf=0;function stabilize(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;walk(document.body);});}
+function audit(){var r={language:en()?'en':'vi',visibleVietnamese:0,attributesVietnamese:0,shortUiResiduals:0,longProseResiduals:0,samples:[]};if(!document.body)return r;var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n;while((n=w.nextNode())){if(skip(n)||!VI.test(n.nodeValue||''))continue;var e=n.parentElement;if(e&&e.offsetParent===null)continue;var t=(n.nodeValue||'').trim();if(!t)continue;r.visibleVietnamese++;if(t.length<=80)r.shortUiResiduals++;else r.longProseResiduals++;if(r.samples.length<40)r.samples.push(t.slice(0,180));}document.querySelectorAll('*').forEach(function(el){if(skip(el))return;ATTR.forEach(function(a){var v=el.getAttribute(a);if(v&&VI.test(v))r.attributesVietnamese++;});});r.totalResiduals=r.visibleVietnamese+r.attributesVietnamese;window.KD_PHASE50.lastAudit=r;document.documentElement.setAttribute('data-kd-p50-vi-residual',String(r.totalResiduals));return r;}
+var mo=new MutationObserver(function(ms){if(ms.some(function(m){return m.type==='childList'||m.type==='characterData'||m.type==='attributes';}))stabilize();});
+function start(){walk(document.body);mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTR});new MutationObserver(stabilize).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});stabilize();}
+window.KD_PHASE50={version:'2026-10-09-p50-final-bilingual-coverage',entries:Object.keys(M).length,scope:'UI/runtime fallback only; classical Chinese/source text protected',reversibleToVietnamese:true,calculationCodeModified:false,lastAudit:null,audit:audit,stabilize:stabilize};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+<!-- ===== END PHASE 50 ===== -->
+
+<script id="kd-phase57-boot-repair">
+(function(){
+'use strict';
+window.KD_PHASE57={
+ version:'2026-10-10-p57-boot-repair',
+ issueFixed:'Phase 44-50 block had been injected inside export HTML JavaScript string, causing the core script to stop parsing before HX/NAPGIAP initialization.',
+ calculationCodeModified:false,
+ dataTablesModified:false,
+ verify:function(){
+  var r={};
+  try{r.HX=Array.isArray(window.HX||[]) ? (window.HX||[]).length : (typeof HX!=='undefined'&&Array.isArray(HX)?HX.length:null);}catch(e){r.HX=null;}
+  try{r.NAPGIAP=(typeof NAPGIAP!=='undefined')?Object.keys(NAPGIAP).length:null;}catch(e){r.NAPGIAP=null;}
+  try{r.dataOK=window.__KD_DATA_OK;}catch(e){r.dataOK=null;}
+  r.ok=(r.HX===64 && r.NAPGIAP===8 && r.dataOK!==false);
+  return r;
+ }
+};
+try{localStorage.removeItem('kd_err');}catch(e){}
+})();
 </script>
 </body></html>
