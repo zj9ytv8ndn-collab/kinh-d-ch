@@ -15666,6 +15666,17 @@ window.revealSteps=function(c){if(window.S_ICHING_LANGUAGE==='vi')return oldStep
 <script id="kd-followup-shell-reviewed-41158">(function(){'use strict';var base=window.KD_REVIEWED_ENGLISH,state=window.KD_FOLLOWUP_SHELL;function norm(s){return String(s).normalize('NFC').replace(/\s+/g,' ').trim();}Object.values(state.fixed).concat(Object.values(state.topics),Object.values(state.names)).forEach(function(s){state.identity.set(norm(s),s);});window.KD_REVIEWED_ENGLISH={version:'4.11.58',pairs:base.pairs,resolve:function(s){var n=norm(s);return state.identity.has(n)?state.identity.get(n):base.resolve(s);}};window.KD_RELEASE='4.11.58';})();</script>
 <script id="kd-followup-routing-41159">window.KD_FOLLOWUP_ROUTING={version:"4.11.59",select:fuSelectText59,keywordRule:"Longest matching normalized keyword; original topic order breaks ties"};window.KD_RELEASE="4.11.59";</script>
 <script id="kd-followup-text-reviewed-41160">(function(){'use strict';var base=window.KD_REVIEWED_ENGLISH,state=window.KD_FOLLOWUP_REVIEWED;function norm(s){return String(s).normalize('NFC').replace(/\s+/g,' ').trim();}window.KD_REVIEWED_ENGLISH={version:'4.11.60',pairs:base.pairs,resolve:function(s){var n=norm(s);return state.identity.has(n)?state.identity.get(n):base.resolve(s);}};window.KD_RELEASE='4.11.60';})();</script>
+<style id="kd-rowlz-css">
+details.row-lz{border:1px solid rgba(201,162,39,.28);border-radius:10px;margin:6px 0;background:rgba(20,18,31,.35);overflow:hidden}
+details.row-lz>summary{list-style:none;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;padding:9px 12px;cursor:pointer;user-select:none;-webkit-user-select:none}
+details.row-lz>summary::-webkit-details-marker{display:none}
+details.row-lz>summary::after{content:"\25B8";margin-left:auto;color:#c9a227;font-size:.85em;transition:transform .2s}
+details.row-lz[open]>summary::after{transform:rotate(90deg)}
+details.row-lz .dvan-txt,details.row-lz .v{display:block;padding:0 12px 10px}
+details.row-lz .dvan-age{color:#c9a227;font-weight:700;min-width:88px}
+details.row-lz .dvan-head{font-weight:700}
+details.row-lz .k{color:#c9a227;font-weight:700}
+</style>
 <script id="kd-collapsify-all">
 (function(){'use strict';
 var BOXES=['result','tnResult','kdDetail','kmResult','lnResult','taResult',
@@ -15694,10 +15705,56 @@ collapsify=function(root){
   }
  }
 };
+/* ---- v1.2: gấp hàng danh sách (dvan / mrow) ---- */
+function kids(el,cls){var out=[];for(var i=0;i<el.children.length;i++){var c=el.children[i];if(c.classList&&c.classList.contains(cls))out.push(c);}return out;}
+function foldDvan(d){
+ if(d.dataset.kdR||d.closest('details.row-lz'))return;
+ var age=kids(d,'dvan-age')[0],body=kids(d,'dvan-body')[0];
+ if(!age||!body)return;
+ var head=kids(body,'dvan-head')[0],txt=kids(body,'dvan-txt')[0];
+ if(!txt)return;
+ d.dataset.kdR='1';
+ var det=document.createElement('details');det.className='lz row-lz';
+ var sum=document.createElement('summary');
+ sum.appendChild(age);if(head)sum.appendChild(head);
+ det.appendChild(sum);det.appendChild(txt);
+ d.parentNode.replaceChild(det,d);
+}
+function foldMrow(m){
+ if(m.dataset.kdR||m.closest('details.row-lz'))return;
+ var ks=kids(m,'k'),vs=kids(m,'v');
+ if(!ks.length||!vs.length)return;
+ /* chỉ gấp khi là danh sách: >=3 mrow cùng cha */
+ var p=m.parentNode,cnt=0;
+ for(var i=0;i<p.children.length;i++){
+  var c=p.children[i];
+  if(c.nodeType===1&&c.classList&&c.classList.contains('mrow'))cnt++;
+ }
+ if(cnt<3)return;
+ m.dataset.kdR='1';
+ var det=document.createElement('details');det.className='lz row-lz';
+ var sum=document.createElement('summary');
+ sum.appendChild(ks[0]);
+ /* các span còn lại (trừ .v đầu) đưa lên summary */
+ for(var j=0;j<m.children.length;j++){
+  var ch=m.children[j];
+  if(ch===ks[0]||ch===vs[0])continue;
+  sum.appendChild(ch);j--;
+ }
+ det.appendChild(sum);det.appendChild(vs[0]);
+ p.replaceChild(det,m);
+}
+function foldRows(root){
+ if(!root)return;
+ var ds=root.querySelectorAll('div.dvan');
+ for(var i=0;i<ds.length;i++){try{foldDvan(ds[i]);}catch(e){}}
+ var ms=root.querySelectorAll('div.mrow');
+ for(var j=0;j<ms.length;j++){try{foldMrow(ms[j]);}catch(e){}}
+}
 function run(){
  for(var i=0;i<BOXES.length;i++){
   var el=document.getElementById(BOXES[i]);
-  if(el){try{collapsify(el);}catch(e){}}
+  if(el){try{collapsify(el);foldRows(el);}catch(e){}}
  }
 }
 document.addEventListener('DOMContentLoaded',function(){
