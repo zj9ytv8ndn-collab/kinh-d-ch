@@ -4916,24 +4916,38 @@ window.KD_QIMEN_COMPLETION760={
 };
 })();
 </script>
-<script id="kd761-qimen-boot-repair">
+
+<script id="kd762-qimen-restore">
 (function(){
 'use strict';
-function ensure(){
+window.KD_RELEASE='4.11.762';
+function loadQiMen(){
  try{
-  if(window.KD_LAZY494&&typeof KD_LAZY494.ensure==='function')KD_LAZY494.ensure('kymon');
-  return typeof window.kmLap==='function'&&typeof window.kmRender==='function'&&typeof window.kdWithTimeContext==='function';
- }catch(e){console.error('[Kỳ Môn boot 4.11.761]',e);return false;}
+   if(window.KD_LAZY494&&typeof KD_LAZY494.ensure==='function'){
+     document.querySelectorAll('script[data-kd-lazy="kymon"]').forEach(function(el){
+       if(!el.dataset.kdDone)KD_LAZY494.ensure(el);
+     });
+   }
+   return {
+     kmLap:typeof window.kmLap==='function',
+     kmRender:typeof window.kmRender==='function',
+     timeContext:typeof window.kdWithTimeContext==='function'
+   };
+ }catch(e){
+   console.error('[Kỳ Môn restore 4.11.762]',e);
+   return {kmLap:false,kmRender:false,timeContext:typeof window.kdWithTimeContext==='function',error:String(e)};
+ }
 }
-document.addEventListener('click',function(e){
- var b=e.target&&e.target.closest&&e.target.closest('#btnKM,#btnKMF,#kmPills .pill,.kmc-tap,button[onclick^="__kmBan"]');
- if(b)ensure();
-},true);
+function isQiMenTarget(e){
+ var t=e&&e.target;
+ return !!(t&&t.closest&&t.closest('[data-s="scr-kymon"],#scr-kymon,#btnKM,#btnKMF,#kmPills,.kmc-tap'));
+}
+document.addEventListener('click',function(e){if(isQiMenTarget(e))loadQiMen();},true);
 document.addEventListener('DOMContentLoaded',function(){
  var pane=document.getElementById('scr-kymon');
- if(pane&&pane.classList.contains('on'))ensure();
+ if(pane&&pane.classList.contains('on'))loadQiMen();
 },{once:true});
-window.KD_QIMEN_BOOT761={version:'4.11.761',ensure:ensure};
+window.KD_QIMEN_RESTORE762={version:'4.11.762',load:loadQiMen};
 })();
 </script>
 </body></html>
