@@ -1094,7 +1094,150 @@ window.kdDownload95=function(name,mime,text){if(window.webkit&&window.webkit.mes
 
 // Native export adapter keeps existing HTML/PNG buttons usable in WKWebView.
 if(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.kdShare){
- var nativeHTML=exportHTML;exportHTML=function(title,body){kdDownload95('S_I_CHING_result.html','text/html','<!doctype html><html lang="'+(window.S_ICHING_LANGUAGE==='vi'?'vi':'en')+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>'+E(title)+'</title><style>body{font:16px Georgia,serif;max-width:900px;margin:auto;padding:20px;line-height:1.6;color:#221d10;background:#fffdf5}table{border-collapse:collapse;width:100%}td,th{border:1px solid #bbb;padding:6px}svg,img{max-width:100%}.card{padding:14px;border:1px solid #aaa;margin:10px 0}button{display:none}</style></head><body><h1>'+E(title)+'</h1>'+body+'\n</body></html>');};
+ var nativeHTML=exportHTML;exportHTML=function(title,body){kdDownload95('S_I_CHING_result.html','text/html','<!doctype html><html lang="'+(window.S_ICHING_LANGUAGE==='vi'?'vi':'en')+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>'+E(title)+'</title><style>body{font:16px Georgia,serif;max-width:900px;margin:auto;padding:20px;line-height:1.6;color:#221d10;background:#fffdf5}table{border-collapse:collapse;width:100%}td,th{border:1px solid #bbb;padding:6px}svg,img{max-width:100%}.card{padding:14px;border:1px solid #aaa;margin:10px 0}button{display:none}</style></head><body><h1>'+E(title)+'</h1>'+body+'\n
+<style id="kd-gold-home-v1">
+#kdGoldHome{
+ --gh-bg:var(--bg0,#07131d);--gh-card:var(--card,#0b1822);--gh-ink:var(--ink,#f3ead8);
+ --gh-dim:var(--dim,#c9bdab);--gh-gold:var(--gold2,#efbf58);--gh-line:var(--line,#a77a30);
+ position:fixed;inset:0;z-index:2147482000;overflow:auto;color:var(--gh-ink);
+ background:
+ radial-gradient(circle at 82% 11%,color-mix(in srgb,var(--gh-gold) 15%,transparent),transparent 22%),
+ radial-gradient(circle at 15% 18%,color-mix(in srgb,var(--gh-gold) 10%,transparent),transparent 22%),
+ var(--gh-bg);
+ font-family:Georgia,"Times New Roman",system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+ transition:background .25s ease,color .25s ease
+}
+#kdGoldHome *{box-sizing:border-box}
+.kdgh-shell{min-height:100%;padding:26px 16px 92px;max-width:1536px;margin:auto}
+.kdgh-top{position:relative;min-height:260px;border-radius:0 0 34px 34px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.kdgh-top:before,.kdgh-top:after{content:"";position:absolute;bottom:14px;width:31%;height:145px;opacity:.7;
+background:linear-gradient(165deg,transparent 40%,color-mix(in srgb,var(--gh-gold) 25%,transparent) 41% 44%,transparent 45%),
+linear-gradient(15deg,transparent 54%,color-mix(in srgb,var(--gh-gold) 16%,transparent) 55% 58%,transparent 59%)}
+.kdgh-top:before{left:0}.kdgh-top:after{right:0;transform:scaleX(-1)}
+.kdgh-settings{position:absolute;left:22px;top:10px;width:68px;height:68px;border-radius:50%;border:1.5px solid var(--gh-line);
+background:var(--gh-card);color:var(--gh-gold);font-size:34px;box-shadow:0 0 0 3px color-mix(in srgb,var(--gh-gold) 12%,transparent),0 0 20px rgba(0,0,0,.45)}
+.kdgh-lang{position:absolute;right:22px;top:10px;display:flex;border:1.5px solid var(--gh-line);border-radius:32px;overflow:hidden;background:var(--gh-card)}
+.kdgh-lang button{min-width:84px;padding:14px 20px;border:0;background:transparent;color:var(--gh-dim);font:700 21px system-ui}
+.kdgh-lang button.on{background:linear-gradient(180deg,color-mix(in srgb,var(--gh-gold) 88%,white),var(--gh-gold));color:var(--gh-bg);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--gh-gold) 35%,white)}
+.kdgh-brand{display:flex;align-items:center;gap:34px;z-index:1;margin-top:8px}
+.kdgh-bagua{width:226px;height:226px;border:2px solid var(--gh-gold);border-radius:50%;display:grid;place-items:center;position:relative;
+box-shadow:0 0 24px color-mix(in srgb,var(--gh-gold) 20%,transparent),inset 0 0 25px rgba(0,0,0,.55);
+background:radial-gradient(circle,var(--gh-gold) 0 7%,var(--gh-bg) 7.5% 28%,var(--gh-gold) 28.5% 29.5%,var(--gh-card) 30%)}
+.kdgh-bagua:before{content:"☯";font:112px Georgia;color:var(--gh-gold);text-shadow:0 0 10px rgba(0,0,0,.55)}
+.kdgh-bagua:after{content:"☰  ☵  ☶  ☳  ☷  ☲  ☴  ☱";position:absolute;inset:16px;text-align:center;font:700 18px system-ui;word-spacing:9px;line-height:188px;color:var(--gh-gold)}
+.kdgh-title{text-align:center;min-width:560px}
+.kdgh-title h1{margin:0;color:var(--gh-gold);font-size:76px;letter-spacing:13px;font-weight:700;text-shadow:0 2px 0 color-mix(in srgb,var(--gh-gold) 55%,black),0 0 18px color-mix(in srgb,var(--gh-gold) 30%,transparent)}
+.kdgh-rule{height:2px;margin:10px 0 12px;background:linear-gradient(90deg,transparent,var(--gh-line) 16%,var(--gh-gold) 50%,var(--gh-line) 84%,transparent);box-shadow:0 0 8px var(--gh-gold)}
+.kdgh-title p{margin:0;font:700 31px system-ui;letter-spacing:1px;color:var(--gh-ink)}
+.kdgh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:12px}
+.kdgh-card{min-height:176px;border:1.5px solid var(--gh-line);border-radius:16px;padding:17px 18px;display:flex;align-items:center;gap:17px;
+background:linear-gradient(145deg,color-mix(in srgb,var(--gh-card) 96%,var(--gh-gold) 4%),var(--gh-card));
+box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gh-gold) 5%,transparent),0 8px 18px rgba(0,0,0,.22);
+color:var(--gh-ink);text-align:left;transition:.16s transform,.16s box-shadow,.25s background,.25s border-color}
+.kdgh-card:hover,.kdgh-card:active{transform:translateY(-2px);box-shadow:0 0 20px color-mix(in srgb,var(--gh-gold) 22%,transparent),inset 0 0 18px color-mix(in srgb,var(--gh-gold) 8%,transparent)}
+.kdgh-card.primary{border-color:var(--gh-gold);box-shadow:0 0 12px color-mix(in srgb,var(--gh-gold) 34%,transparent),inset 0 0 18px color-mix(in srgb,var(--gh-gold) 8%,transparent)}
+.kdgh-icon{flex:0 0 128px;height:128px;border-radius:50%;display:grid;place-items:center;color:var(--gh-gold);border:1px solid color-mix(in srgb,var(--gh-gold) 65%,transparent);
+font:700 62px Georgia;background:radial-gradient(circle,color-mix(in srgb,var(--gh-gold) 13%,transparent),transparent 67%);text-shadow:0 0 10px color-mix(in srgb,var(--gh-gold) 25%,transparent)}
+.kdgh-card.primary .kdgh-icon{border:0;border-radius:0;font-size:94px}
+.kdgh-copy b{display:block;color:var(--gh-gold);font-size:27px;line-height:1.05;margin-bottom:12px;text-transform:uppercase}
+.kdgh-copy span{display:block;color:var(--gh-ink);font:19px/1.55 system-ui}
+.kdgh-bottom{position:fixed;z-index:2147482001;left:0;right:0;bottom:0;height:82px;display:grid;grid-template-columns:repeat(6,1fr);
+background:color-mix(in srgb,var(--gh-bg) 94%,transparent);border-top:1px solid var(--gh-line);backdrop-filter:blur(16px)}
+.kdgh-bottom button{border:0;border-right:1px solid color-mix(in srgb,var(--gh-line) 28%,transparent);background:transparent;color:var(--gh-dim);font:16px system-ui}
+.kdgh-bottom button strong{display:block;font-size:28px;line-height:1.1;margin-bottom:4px;color:var(--gh-dim)}
+.kdgh-bottom button.on,.kdgh-bottom button.on strong{color:var(--gh-gold)}
+@media(max-width:1050px){.kdgh-brand{gap:18px}.kdgh-bagua{width:170px;height:170px}.kdgh-bagua:before{font-size:84px}.kdgh-bagua:after{font-size:14px;line-height:140px}.kdgh-title{min-width:0}.kdgh-title h1{font-size:52px}.kdgh-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.kdgh-shell{padding:16px 10px 82px}.kdgh-top{min-height:235px}.kdgh-settings{width:52px;height:52px;font-size:26px;left:8px}.kdgh-lang{right:8px}.kdgh-lang button{min-width:56px;padding:10px 12px;font-size:15px}.kdgh-brand{gap:10px;flex-direction:column}.kdgh-bagua{width:112px;height:112px}.kdgh-bagua:before{font-size:56px}.kdgh-bagua:after{display:none}.kdgh-title h1{font-size:36px;letter-spacing:7px}.kdgh-title p{font-size:20px}.kdgh-grid{grid-template-columns:1fr;gap:10px}.kdgh-card{min-height:132px;padding:12px}.kdgh-icon{flex-basis:92px;height:92px;font-size:46px}.kdgh-card.primary .kdgh-icon{font-size:70px}.kdgh-copy b{font-size:22px;margin-bottom:6px}.kdgh-copy span{font-size:16px}.kdgh-bottom{height:72px}.kdgh-bottom button{font-size:11px}.kdgh-bottom button strong{font-size:23px}}
+</style>
+<div id="kdGoldHome" aria-label="S I CHING Home">
+  <div class="kdgh-shell">
+    <header class="kdgh-top">
+      <button class="kdgh-settings" type="button" data-kdgh-settings aria-label="Cài đặt">⚙</button>
+      <div class="kdgh-lang"><button type="button" data-kdgh-lang="vi">VI</button><button type="button" data-kdgh-lang="en">EN</button></div>
+      <div class="kdgh-brand"><div class="kdgh-bagua" aria-hidden="true"></div><div class="kdgh-title"><h1>S I CHING</h1><div class="kdgh-rule"></div><p>Gieo quẻ Kinh Dịch</p></div></div>
+    </header>
+    <main class="kdgh-grid">
+      <button class="kdgh-card primary" data-kdgh-go="scr-cast"><div class="kdgh-icon">☰</div><div class="kdgh-copy"><b>Kinh Dịch</b><span>64 Quẻ · 384 Hào<br>Luận giải chuyên sâu</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-thaiat"><div class="kdgh-icon">◎</div><div class="kdgh-copy"><b>Thái Ất</b><span>Nhật Cục · Nguyệt Cục<br>Mệnh Lý Toàn Thư</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-kymon"><div class="kdgh-icon">☯</div><div class="kdgh-copy"><b>Kỳ Môn</b><span>Độn Giáp Toàn Thư<br>Ứng Dụng Thực Chiến</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-lucnham"><div class="kdgh-icon">玄</div><div class="kdgh-copy"><b>Đại Lục Nhâm</b><span>Tam Truyền · Tứ Khóa<br>Dự Đoán Chính Xác</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-tuvi"><div class="kdgh-icon">✦</div><div class="kdgh-copy"><b>Tử Vi Đẩu Số</b><span>Lá Số · An Sao<br>Luận Giải Chi Tiết</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-battu"><div class="kdgh-icon">五</div><div class="kdgh-copy"><b>Bát Tự</b><span>Tứ Trụ Mệnh Lý<br>Dụng Thần · Vận Hạn</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-hdlt"><div class="kdgh-icon">☯</div><div class="kdgh-copy"><b>Hà Lạc Lý Số</b><span>Số Học Phương Đông<br>Ứng Dụng Đời Sống</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-hk"><div class="kdgh-icon">✺</div><div class="kdgh-copy"><b>Huyền Không</b><span>Phong Thủy Dương Trạch<br>Âm Trạch · Cát Hung</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-tarot"><div class="kdgh-icon">♈</div><div class="kdgh-copy"><b>Huyền Học Tây Phương</b><span>Chiêm Tinh · Tarot<br>Thần Số Học</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-library"><div class="kdgh-icon">▥</div><div class="kdgh-copy"><b>Thư Viện Chuyên Sâu</b><span>Sách Cổ · Văn Bản<br>Chú Giải · Đối Chiếu</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-kd"><div class="kdgh-icon">⌕</div><div class="kdgh-copy"><b>Nghiên Cứu Đối Chiếu</b><span>Nguồn Gốc · Trường Phái<br>Đông Phương · Tây Phương</span></div></button>
+      <button class="kdgh-card" data-kdgh-go="scr-his"><div class="kdgh-icon">✎</div><div class="kdgh-copy"><b>Hồ Sơ Nghiên Cứu</b><span>Lưu Lại · Ghi Chú<br>Quản Lý Lá Số</span></div></button>
+    </main>
+  </div>
+  <nav class="kdgh-bottom">
+    <button class="on" data-kdgh-home><strong>⌂</strong>Trang Chủ</button>
+    <button data-kdgh-go="scr-library"><strong>▤</strong>Tra Cứu</button>
+    <button data-kdgh-go="scr-kh"><strong>⊞</strong>Công Cụ</button>
+    <button data-kdgh-go="scr-cast"><strong>▣</strong>Lịch Pháp</button>
+    <button data-kdgh-go="scr-his"><strong>▧</strong>Lưu Hồ Sơ</button>
+    <button data-kdgh-settings><strong>⚙</strong>Cài Đặt</button>
+  </nav>
+</div>
+<script id="kd-gold-home-theme-sync-v2">
+(function(){
+  function pick(name,fallback){
+    var nodes=[document.documentElement,document.body,document.getElementById('app')].filter(Boolean);
+    for(var i=0;i<nodes.length;i++){
+      var v=getComputedStyle(nodes[i]).getPropertyValue(name).trim();
+      if(v) return v;
+    }
+    return fallback;
+  }
+  function sync(){
+    var h=document.getElementById('kdGoldHome'); if(!h)return;
+    h.style.setProperty('--gh-bg',pick('--bg0','#07131d'));
+    h.style.setProperty('--gh-card',pick('--card','#0b1822'));
+    h.style.setProperty('--gh-ink',pick('--ink','#f3ead8'));
+    h.style.setProperty('--gh-dim',pick('--dim','#c9bdab'));
+    h.style.setProperty('--gh-gold',pick('--gold2','#efbf58'));
+    h.style.setProperty('--gh-line',pick('--line','#a77a30'));
+    var meta=document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute('content',pick('--bg0','#07131d'));
+  }
+  window.KD_SYNC_GOLD_HOME_THEME=sync;
+  sync();
+  var mo=new MutationObserver(sync);
+  [document.documentElement,document.body,document.getElementById('app')].filter(Boolean).forEach(function(n){
+    mo.observe(n,{attributes:true,attributeFilter:['class','style','data-theme','data-color','data-palette']});
+  });
+  document.addEventListener('change',function(){setTimeout(sync,0)},true);
+  document.addEventListener('click',function(){setTimeout(sync,0);setTimeout(sync,180)},true);
+  window.addEventListener('storage',sync);
+})();
+</script>
+<script id="kd-gold-home-runtime-v1">
+(function(){
+  var home=document.getElementById('kdGoldHome');
+  function go(screen){
+    var target=document.querySelector('#tabs [data-s="'+screen+'"], [data-s="'+screen+'"]');
+    if(target){home.style.display='none'; target.click();}
+  }
+  document.querySelectorAll('[data-kdgh-go]').forEach(function(b){b.addEventListener('click',function(){go(b.getAttribute('data-kdgh-go'));});});
+  document.querySelectorAll('[data-kdgh-home]').forEach(function(b){b.addEventListener('click',function(){home.style.display='block';});});
+  document.querySelectorAll('[data-kdgh-settings]').forEach(function(b){b.addEventListener('click',function(){
+    home.style.display='none';
+    var x=document.querySelector('[data-kd351-open-settings],#settingsBtn,.settings-btn,[aria-label*="Cài đặt"],[aria-label*="Settings"]');
+    if(x) x.click(); else { var t=document.querySelector('[data-s="scr-legal"]'); if(t)t.click(); }
+  });});
+  var lang=(window.S_ICHING_LANGUAGE||'vi');
+  document.querySelectorAll('[data-kdgh-lang]').forEach(function(b){
+    b.classList.toggle('on',b.getAttribute('data-kdgh-lang')===lang);
+    b.addEventListener('click',function(){
+      var n=b.getAttribute('data-kdgh-lang');
+      if(window.S_ICHING_I18N&&window.S_ICHING_I18N.setLanguage) window.S_ICHING_I18N.setLanguage(n);
+    });
+  });
+})();
+</script>
+
+</body></html>');};
  var blobs=new Map(),create=URL.createObjectURL.bind(URL),revoke=URL.revokeObjectURL.bind(URL);URL.createObjectURL=function(blob){var url=create(blob);blobs.set(url,blob);return url;};URL.revokeObjectURL=function(url){blobs.delete(url);return revoke(url);};
  function shareBlob(url,name){var blob=blobs.get(url);if(!blob)return false;var reader=new FileReader();reader.onload=function(){var value=String(reader.result||''),comma=value.indexOf(',');if(comma<0)return;window.webkit.messageHandlers.kdShare.postMessage({name:name||('S_I_CHING_export.'+(blob.type==='image/png'?'png':blob.type.includes('json')?'json':'html')),mime:blob.type,base64:value.slice(comma+1)});};reader.readAsDataURL(blob);return true;}
  var anchorClick=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=function(){if(shareBlob(this.href,this.download))return;return anchorClick.apply(this,arguments);};
