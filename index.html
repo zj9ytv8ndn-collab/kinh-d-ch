@@ -1130,11 +1130,17 @@ kdHistoryValid=function(p,tv){
 };
 var oldTV=tvBuild;tvBuild=function(){window._lastLS=null;return oldTV.apply(this,arguments);};
 var priorRender=kmRender;
+function kdContext471(ctx,fn){
+ var previous=window.__KD_TIME_CONTEXT;
+ window.__KD_TIME_CONTEXT=ctx||null;
+ try{return fn();}
+ finally{window.__KD_TIME_CONTEXT=previous;}
+}
 function state(km,lv){return {dd:km.dd,mm:km.mm,yy:km.yy,hh:km.hh,when:km.when==null?null:km.when,ban:km.ban==null?3:km.ban,lv:lv||'Tổng quan',timeResolution:km.timeResolution||window.__KD_TIME_CONTEXT||null};}
 kmRender=function(km,lv){var html=priorRender.apply(this,arguments),s=state(km,lv);window.__KM_LAST=s;return '<div class="kd-km-view95" data-kd-chart="'+E(JSON.stringify(s))+'">'+html+'</div>';};
 function fromView(view){var s=JSON.parse(view.dataset.kdChart);if(!kdValidSolar(s.dd,s.mm,s.yy)||!Number.isFinite(s.hh)||s.hh<0||s.hh>=24||!Number.isInteger(s.ban)||s.ban<0||s.ban>3)throw Error('Invalid chart / Biểu đồ không hợp lệ');if(s.timeResolution&&!kdHistoryValid({mon:'kymon',d:s.dd,m:s.mm,y:s.yy,h:s.hh,timeResolution:s.timeResolution},false))throw Error('Invalid time profile / Hồ sơ giờ không hợp lệ');return s;}
-function calculate(s,ban){return window.kdWithTimeContext(s.timeResolution,function(){var k=kmLap(s.dd,s.mm,s.yy,s.hh,ban);k.when=s.when;if(s.timeResolution)k.timeResolution=s.timeResolution;return k;});}
-function changeBoard(s,i,view){if(!Number.isInteger(i)||i<0||i>3)return;var k=calculate(s,i),html=window.kdWithTimeContext(s.timeResolution,function(){return kmRender(k,s.lv);});if(view)view.outerHTML=html;else{var target=document.getElementById('kmResult');if(target)target.innerHTML=html;}}
+function calculate(s,ban){return kdContext471(s.timeResolution,function(){var k=kmLap(s.dd,s.mm,s.yy,s.hh,ban);k.when=s.when;if(s.timeResolution)k.timeResolution=s.timeResolution;return k;});}
+function changeBoard(s,i,view){if(!Number.isInteger(i)||i<0||i>3)return;var k=calculate(s,i),html=kdContext471(s.timeResolution,function(){return kmRender(k,s.lv);});if(view)view.outerHTML=html;else{var target=document.getElementById('kmResult');if(target)target.innerHTML=html;}}
 window.__kmBan=function(i){var s=window.__KM_LAST;if(s&&s.dd!==undefined)changeBoard(s,i,null);};
 document.addEventListener('click',function(e){var view=e.target.closest&&e.target.closest('.kd-km-view95');if(!view)return;var b=e.target.closest('button[onclick]'),m=b&&/^__kmBan\(([0-3])\)$/.exec(b.getAttribute('onclick')||'');
  if(m){e.preventDefault();e.stopImmediatePropagation();try{changeBoard(fromView(view),+m[1],view);}catch(err){alert(String(err.message||err));}return;}
@@ -4928,6 +4934,18 @@ window.KD_QIMEN_AUDIT764={version:'4.11.764',check:function(){
  var r={packageFailure:window.__KD_PACKAGE_FAILURE||null};
  try{r.lazy=window.KD_LAZY494?KD_LAZY494.report():null;r.kmLap=typeof window.kmLap==='function';r.kmRender=typeof window.kmRender==='function';}
  catch(e){r.error=String(e);}return r;
+}};
+})();
+</script>
+<script id="kd765-qimen-context-audit">
+(function(){'use strict';window.KD_RELEASE='4.11.765';
+window.KD_QIMEN_AUDIT765={version:'4.11.765',check:function(){
+ return {
+  packageFailure:window.__KD_PACKAGE_FAILURE||null,
+  lazy:window.KD_LAZY494?KD_LAZY494.report():null,
+  kmLap:typeof window.kmLap==='function',
+  kmRender:typeof window.kmRender==='function'
+ };
 }};
 })();
 </script>
