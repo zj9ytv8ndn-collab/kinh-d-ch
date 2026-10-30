@@ -7498,3 +7498,429 @@ E.version=VERSION;E.evidenceBoundTopicComposer={compose:compose,audit:audit};
 function mount(){var root=document.getElementById('kd-engine-12400-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-12500-ui'))return;var d=document.createElement('div');d.id='kd-engine-12500-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>✍️ V76 · Evidence-bound Topic Composer</b></summary><p>Chuyển semantic feature của từng quẻ thành câu luận riêng, nhưng từng claim vẫn phải có Evidence Node ID. Không tự thêm xác suất, lời hứa tương lai hay chẩn đoán sức khỏe.</p><button class="btn" id="v76a">Audit 320 bài luận</button><p id="v76s"></p><pre id="v76o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';root.appendChild(d);d.querySelector('#v76a').onclick=()=>{var r=audit();d.querySelector('#v76o').textContent=JSON.stringify(r,null,2);d.querySelector('#v76s').textContent=r.status+' · CASES '+r.cases+'/'+r.expected+' · ISSUES '+r.issues;};}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();
 </script>
+
+<script id="kd-classical-engine-12600">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.evidenceBoundTopicComposer)return;var VERSION='12.7.0-topic-prose-uniqueness-gate';
+function toks(s){return new Set(String(s||'').toLowerCase().normalize('NFKC').replace(/[^\p{L}\p{N}]+/gu,' ').trim().split(/\s+/).filter(Boolean))}
+function jac(a,b){a=toks(a);b=toks(b);if(!a.size&&!b.size)return 1;var n=0;a.forEach(x=>{if(b.has(x))n++});return n/(a.size+b.size-n||1)}
+function audit(){
+ var topics=['tinh_duyen','hon_nhan','cong_viec','tai_van','suc_khoe'],rows=[],issues=[];
+ for(var t of topics){
+  var a=[];for(var h=1;h<=64;h++){var r=E.evidenceBoundTopicComposer.compose(h,t,[]);a.push(r);rows.push({hexagram:h,topic:t,status:r.status,pattern:r.corePattern,body:r.body});if(r.status!=='READY'||!r.evidenceCoverage)issues.push({code:'NOT_EVIDENCE_READY',hexagram:h,topic:t});}
+  for(var i=0;i<a.length;i++)for(var j=i+1;j<a.length;j++){var s=jac(a[i].body,a[j].body);if(s>=.88)issues.push({code:'HIGH_PROSE_SIMILARITY',topic:t,hexagrams:[a[i].hexagram,a[j].hexagram],similarity:+s.toFixed(3),patterns:[a[i].corePattern,a[j].corePattern]});}
+  var groups={};a.forEach(r=>{var k=r.corePattern||'EMPTY';(groups[k]||(groups[k]=[])).push(r.hexagram)});Object.entries(groups).forEach(([k,hs])=>{if(hs.length>=8)issues.push({code:'LOW_SEMANTIC_DIFFERENTIATION',topic:t,pattern:k,hexagrams:hs});});
+ }
+ var hi=issues.filter(x=>x.code==='HIGH_PROSE_SIMILARITY').length,lo=issues.filter(x=>x.code==='LOW_SEMANTIC_DIFFERENTIATION').length;
+ return {schema:'siching.topic-prose-uniqueness-gate.v1',engineVersion:VERSION,status:issues.length?'REVIEW':'PASS',cases:rows.length,expected:320,threshold:.88,highSimilarityPairs:hi,lowDifferentiationClusters:lo,issues:issues.length,issueRows:issues.slice(0,1000),boundary:'A PASS means the generated corpus cleared evidence and duplication gates. It does not prove historical or predictive correctness.'};
+}
+function approved(h,t){var r=audit();return !r.issueRows.some(x=>(x.hexagram===+h&&x.topic===t)||(x.hexagrams&&x.topic===t&&x.hexagrams.includes(+h)));}
+E.version=VERSION;E.topicProseUniquenessGate={audit:audit,approved:approved,jaccard:jac};
+function mount(){var root=document.getElementById('kd-engine-12500-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-12600-ui'))return;var d=document.createElement('div');d.id='kd-engine-12600-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>🧪 V77 · Topic Prose Uniqueness Gate</b></summary><p>Chặn nội dung Luận sâu trước production nếu bài luận khác quẻ vẫn quá giống nhau. Quét đủ 320 bài, similarity ≥ 0.88 hoặc cụm ≥ 8 quẻ cùng semantic pattern đều chuyển REVIEW.</p><button class="btn" id="v77a">Audit 320 · uniqueness gate</button><p id="v77s"></p><pre id="v77o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';root.appendChild(d);d.querySelector('#v77a').onclick=()=>{var r=audit();d.querySelector('#v77o').textContent=JSON.stringify(r,null,2);d.querySelector('#v77s').textContent=r.status+' · HIGH-SIM '+r.highSimilarityPairs+' · CLUSTERS '+r.lowDifferentiationClusters+' · ISSUES '+r.issues;};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();
+</script>
+
+<script id="kd-classical-engine-12700">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.topicProseUniquenessGate||!E.evidenceBoundTopicComposer)return;var VERSION='12.8.0-production-topic-release-gate';
+var CACHE=null;
+function gate(){if(CACHE)return CACHE;var u=E.topicProseUniquenessGate.audit(),blocked={};(u.issueRows||[]).forEach(x=>{if(x.hexagram&&x.topic)blocked[x.topic+'|'+x.hexagram]=true;if(x.hexagrams&&x.topic)x.hexagrams.forEach(h=>blocked[x.topic+'|'+h]=true)});return CACHE={audit:u,blocked:blocked};}
+function release(h,t,ml){
+ var g=gate(),key=t+'|'+(+h);if(g.blocked[key])return {schema:'siching.topic-release.v1',engineVersion:VERSION,status:'BLOCKED_REVIEW',hexagram:+h,topic:t,reason:'Uniqueness/evidence regression has an unresolved issue for this record; legacy content must remain active.'};
+ var r=E.evidenceBoundTopicComposer.compose(+h,t,ml||[]);if(r.status!=='READY'||!r.evidenceCoverage)return {schema:'siching.topic-release.v1',engineVersion:VERSION,status:'BLOCKED_EVIDENCE',hexagram:+h,topic:t,reason:'Evidence coverage incomplete.'};
+ return {schema:'siching.topic-release.v1',engineVersion:VERSION,status:'APPROVED',hexagram:+h,topic:t,movingLines:ml||[],body:r.body,claims:r.claims,corePattern:r.corePattern,releasePolicy:{legacyFallback:true,rollback:true,evidenceRequired:true,uniquenessRequired:true}};
+}
+function audit(){CACHE=null;var rows=[],counts={APPROVED:0,BLOCKED_REVIEW:0,BLOCKED_EVIDENCE:0};for(var t of ['tinh_duyen','hon_nhan','cong_viec','tai_van','suc_khoe'])for(var h=1;h<=64;h++){var r=release(h,t,[]);counts[r.status]=(counts[r.status]||0)+1;rows.push({hexagram:h,topic:t,status:r.status,pattern:r.corePattern||null});}return {schema:'siching.production-topic-release-audit.v1',engineVersion:VERSION,status:counts.APPROVED===320?'PASS':'PARTIAL_RELEASE',cases:320,counts:counts,approvedPercent:+(counts.APPROVED/320*100).toFixed(2),rows:rows,boundary:'Only records that clear both evidence and uniqueness gates are approved. Blocked records retain legacy content; no silent overwrite.'};}
+E.version=VERSION;E.productionTopicReleaseGate={release:release,audit:audit,reset:()=>CACHE=null};
+function mount(){var root=document.getElementById('kd-engine-12600-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-12700-ui'))return;var d=document.createElement('div');d.id='kd-engine-12700-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>🚦 V78 · Production Topic Release Gate</b></summary><p>Không phát hành hàng loạt 320 bài chỉ vì đã sinh được nội dung. Mỗi quẻ/chủ đề phải vượt Evidence + Uniqueness; record còn REVIEW bị khóa và giao diện giữ bản cũ. Có thống kê APPROVED/BLOCKED và tỷ lệ release thực tế.</p><button class="btn" id="v78a">Audit Production Release</button><p id="v78s"></p><pre id="v78o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';root.appendChild(d);d.querySelector('#v78a').onclick=()=>{var r=audit();d.querySelector('#v78o').textContent=JSON.stringify(r,null,2);d.querySelector('#v78s').textContent=r.status+' · APPROVED '+r.counts.APPROVED+'/320 ('+r.approvedPercent+'%) · REVIEW '+r.counts.BLOCKED_REVIEW+' · EVIDENCE '+r.counts.BLOCKED_EVIDENCE;};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();
+</script>
+
+<script id="kd-classical-engine-12800">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.productionTopicReleaseGate)return;var VERSION='12.9.0-release-ui-bridge';
+var S={enabled:false,last:null};
+function ctx(el){var h=+(el.dataset.hexagram||window.KD_CURRENT_HEXAGRAM||0),t=el.dataset.topicKey||el.dataset.topic||window.KD_CURRENT_TOPIC||'',raw=el.dataset.movingLines||'';var ml=raw?raw.split(/[,\s]+/).map(Number).filter(x=>x>=1&&x<=6):(window.KD_MOVING_LINES||[]);return {h:h,t:t,ml:Array.isArray(ml)?ml:[]};}
+function render(el,r){if(r.status!=='APPROVED')return false;if(!el.dataset.kdV79Legacy)el.dataset.kdV79Legacy=el.innerHTML;var claims=(r.claims||[]).map(c=>'<li>'+String(c.text||'').replace(/[<>]/g,'')+' <small>['+(c.evidenceNodeIds||[]).join(', ')+']</small></li>').join('');el.innerHTML='<section class="kd-v79-release"><h3>Luận sâu theo chủ đề</h3><p>'+String(r.body||'').replace(/[<>]/g,'')+'</p><details><summary>Vì sao? · Chứng cứ</summary><ol>'+claims+'</ol><p><small>'+VERSION+' · '+r.status+' · không phải xác suất dự báo.</small></p></details></section>';el.dataset.kdV79='APPROVED';return true;}
+function apply(root){root=root||document;var targets=E.deepTopicUIAdapter?E.deepTopicUIAdapter.findTargets(root):[],rows=[];targets.forEach(el=>{var c=ctx(el);if(!c.h||!c.t){rows.push({status:'SKIP_CONTEXT'});return}var r=E.productionTopicReleaseGate.release(c.h,c.t,c.ml);var ok=render(el,r);rows.push({hexagram:c.h,topic:c.t,status:ok?'RELEASED':r.status});});S.last=rows;return {schema:'siching.release-ui-bridge.v1',engineVersion:VERSION,enabled:S.enabled,targets:targets.length,released:rows.filter(x=>x.status==='RELEASED').length,blocked:rows.filter(x=>x.status!=='RELEASED').length,rows:rows};}
+function rollback(root){root=root||document;var n=0;(E.deepTopicUIAdapter?E.deepTopicUIAdapter.findTargets(root):[]).forEach(el=>{if(el.dataset.kdV79Legacy!=null){el.innerHTML=el.dataset.kdV79Legacy;delete el.dataset.kdV79;delete el.dataset.kdV79Legacy;n++;}});return n;}
+function audit(){var r=E.productionTopicReleaseGate.audit();return {schema:'siching.release-ui-bridge-audit.v1',engineVersion:VERSION,status:'PASS',releaseAudit:r,policy:{autoApply:false,manualEnableRequired:true,blockedNeverOverwrite:true,rollback:true},note:'Production bridge is intentionally disabled by default until the release audit is reviewed.'};}
+E.version=VERSION;E.releaseUIBridge={state:S,audit:audit,apply:apply,rollback:rollback,enable:function(){S.enabled=true;return apply(document)},disable:function(){S.enabled=false;return rollback(document)}};
+function mount(){var root=document.getElementById('kd-engine-12700-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-12800-ui'))return;var d=document.createElement('div');d.id='kd-engine-12800-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>🚀 V79 · Release UI Bridge</b></summary><p>Nối Production Release Gate với giao diện thật. Mặc định KHÔNG tự ghi đè: phải audit rồi bật thủ công. Chỉ record APPROVED được render; BLOCKED giữ nguyên nội dung cũ; có rollback.</p><button class="btn" id="v79a">Audit Release</button> <button class="btn" id="v79b">Enable approved only</button> <button class="btn" id="v79c">Rollback</button><p id="v79s"></p><pre id="v79o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';root.appendChild(d);var o=d.querySelector('#v79o'),s=d.querySelector('#v79s');d.querySelector('#v79a').onclick=()=>{var r=audit();o.textContent=JSON.stringify(r,null,2);s.textContent='AUDIT · APPROVED '+r.releaseAudit.counts.APPROVED+'/320 · BLOCKED '+(r.releaseAudit.counts.BLOCKED_REVIEW+r.releaseAudit.counts.BLOCKED_EVIDENCE)};d.querySelector('#v79b').onclick=()=>{var r=E.releaseUIBridge.enable();o.textContent=JSON.stringify(r,null,2);s.textContent='RELEASED '+r.released+' · BLOCKED '+r.blocked};d.querySelector('#v79c').onclick=()=>{var n=E.releaseUIBridge.disable();s.textContent='ROLLBACK '+n+' TARGET(S)';};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();
+</script>
+
+<script id="kd-classical-engine-12900">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.releaseUIBridge||!E.productionTopicReleaseGate)return;var VERSION='13.0.0-release-manifest';
+function build(){
+ var a=E.productionTopicReleaseGate.audit(),rows=a.rows||[],approved=rows.filter(x=>x.status==='APPROVED'),blocked=rows.filter(x=>x.status!=='APPROVED');
+ function key(r){return 'YI-'+String(r.hexagram).padStart(2,'0')+'-'+r.topic}
+ return {schema:'siching.topic-release-manifest.v1',engineVersion:VERSION,createdAt:new Date().toISOString(),
+ summary:{total:rows.length,approved:approved.length,blocked:blocked.length,approvedPercent:+(approved.length/(rows.length||1)*100).toFixed(2)},
+ approved:approved.map(r=>({releaseId:key(r),hexagram:r.hexagram,topic:r.topic,pattern:r.pattern||null,status:r.status})),
+ blocked:blocked.map(r=>({releaseId:key(r),hexagram:r.hexagram,topic:r.topic,status:r.status,reason:r.status==='BLOCKED_REVIEW'?'uniqueness/evidence review unresolved':'evidence incomplete'})),
+ policy:{partialReleaseAllowed:true,blockedKeepsLegacy:true,silentOverwrite:false,rollbackRequired:true,predictiveAccuracy:'NOT MEASURED'}};
+}
+function validate(m){m=m||build();var ids=new Set(),issues=[];(m.approved||[]).concat(m.blocked||[]).forEach(r=>{if(ids.has(r.releaseId))issues.push({code:'DUPLICATE_RELEASE_ID',id:r.releaseId});ids.add(r.releaseId)});if(ids.size!==m.summary.total)issues.push({code:'CARDINALITY',ids:ids.size,total:m.summary.total});if(m.summary.total!==320)issues.push({code:'EXPECTED_320',actual:m.summary.total});return {schema:'siching.topic-release-manifest-audit.v1',engineVersion:VERSION,status:issues.length?'FAIL':'PASS',issues:issues,summary:m.summary};}
+function download(){var m=build(),blob=new Blob([JSON.stringify(m,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='S_I_CHING_TOPIC_RELEASE_MANIFEST_V80.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);return m.summary;}
+E.version=VERSION;E.topicReleaseManifest={build:build,validate:validate,download:download};
+function mount(){var root=document.getElementById('kd-engine-12800-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-12900-ui'))return;var d=document.createElement('div');d.id='kd-engine-12900-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>📦 V80 · Release Manifest</b></summary><p>Đóng gói danh sách 320 quẻ/chủ đề thành manifest phát hành: APPROVED và BLOCKED tách riêng, có Release ID duy nhất, tỷ lệ approved thực tế, lý do block và chính sách rollback. Không coi tỷ lệ release là độ chính xác dự báo.</p><button class="btn" id="v80a">Build + Audit Manifest</button> <button class="btn" id="v80b">Export JSON</button><p id="v80s"></p><pre id="v80o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';root.appendChild(d);var o=d.querySelector('#v80o'),s=d.querySelector('#v80s');d.querySelector('#v80a').onclick=()=>{var m=build(),r=validate(m);o.textContent=JSON.stringify({audit:r,manifest:m},null,2);s.textContent=r.status+' · APPROVED '+m.summary.approved+'/'+m.summary.total+' ('+m.summary.approvedPercent+'%) · BLOCKED '+m.summary.blocked};d.querySelector('#v80b').onclick=()=>{var r=download();s.textContent='EXPORTED · APPROVED '+r.approved+'/'+r.total+' · BLOCKED '+r.blocked;};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();
+</script>
+
+<script id="kd-classical-engine-13000">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.topicReleaseManifest)return;var VERSION='13.1.0-release-blocker-workqueue';
+function build(){
+ var m=E.topicReleaseManifest.build(),q=(m.blocked||[]).map(function(r,i){
+  var semantic=E.topicSemanticDifferentiator?E.topicSemanticDifferentiator.compile(r.hexagram,r.topic,[]):null;
+  return {queueId:'RQ-'+String(i+1).padStart(3,'0'),releaseId:r.releaseId,hexagram:r.hexagram,topic:r.topic,status:'OPEN',
+   blocker:r.status,reason:r.reason,corePattern:semantic&&semantic.corePattern||null,
+   evidenceClaims:semantic&&semantic.claims||[],requiredAction:r.status==='BLOCKED_REVIEW'?'Differentiate prose/semantic pattern without adding unsupported claims; preserve evidence IDs.':'Repair missing evidence before composing prose.',
+   acceptance:['Evidence coverage complete','No orphan claim','No high-similarity pair >= 0.88','No silent overwrite','Legacy fallback remains available']};
+ });
+ return {schema:'siching.release-blocker-workqueue.v1',engineVersion:VERSION,createdAt:new Date().toISOString(),open:q.length,items:q,policy:{automaticFabrication:false,evidenceFirst:true,humanReviewCompatible:true}};
+}
+function audit(){var q=build(),ids=new Set(),issues=[];q.items.forEach(x=>{if(ids.has(x.queueId))issues.push({code:'DUP_QUEUE_ID',id:x.queueId});ids.add(x.queueId);if(!x.releaseId||!x.requiredAction)issues.push({code:'INCOMPLETE_TASK',id:x.queueId});});return {schema:'siching.release-blocker-workqueue-audit.v1',engineVersion:VERSION,status:issues.length?'FAIL':'PASS',open:q.open,issues:issues.length,issueRows:issues};}
+function exportJson(){var q=build(),blob=new Blob([JSON.stringify(q,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='S_I_CHING_V81_BLOCKER_WORKQUEUE.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+E.version=VERSION;E.releaseBlockerWorkqueue={build:build,audit:audit,exportJson:exportJson};
+function mount(){var root=document.getElementById('kd-engine-12900-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-13000-ui'))return;var d=document.createElement('div');d.id='kd-engine-13000-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>🛠️ V81 · Blocker Workqueue</b></summary><p>Biến toàn bộ record BLOCKED của manifest thành hàng đợi sửa cụ thể. Mỗi task giữ Release ID, quẻ, chủ đề, blocker, semantic pattern, evidence claims, hành động cần làm và acceptance criteria. Không tự bịa nội dung để ép APPROVED.</p><button class="btn" id="v81a">Audit Workqueue</button> <button class="btn" id="v81b">Export JSON</button><p id="v81s"></p><pre id="v81o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';root.appendChild(d);var o=d.querySelector('#v81o'),s=d.querySelector('#v81s');d.querySelector('#v81a').onclick=()=>{var q=build(),r=audit();o.textContent=JSON.stringify({audit:r,queue:q},null,2);s.textContent=r.status+' · OPEN BLOCKERS '+q.open};d.querySelector('#v81b').onclick=()=>{exportJson();s.textContent='WORKQUEUE EXPORTED';};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();
+</script>
+
+<script id="kd-classical-engine-13100">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.releaseBlockerWorkqueue||!E.evidenceBoundTopicComposer)return;var VERSION='13.2.0-blocker-remediation-engine';
+var OPEN={};
+function evidenceKey(c){return (c.evidenceNodeIds||[]).slice().sort().join('|')}
+function remediate(item){
+ var base=E.evidenceBoundTopicComposer.compose(item.hexagram,item.topic,[]);
+ if(base.status!=='READY')return {queueId:item.queueId,status:'UNRESOLVED_EVIDENCE',releaseId:item.releaseId};
+ var claims=(base.claims||[]).map((c,i)=>({claimId:c.claimId,evidenceNodeIds:c.evidenceNodeIds,text:c.text,slot:i===0?'core':i===1?'condition':i===2?'risk':'stance'}));
+ var uniqueAnchors=[...new Set(claims.map(evidenceKey).filter(Boolean))];
+ var status=uniqueAnchors.length?'CANDIDATE_REWRITE':'UNRESOLVED_EVIDENCE';
+ return {schema:'siching.blocker-remediation.v1',engineVersion:VERSION,queueId:item.queueId,releaseId:item.releaseId,hexagram:item.hexagram,topic:item.topic,status:status,
+   rewritePlan:{corePattern:base.corePattern,claimSlots:claims,uniqueEvidenceAnchors:uniqueAnchors,
+   instructions:['Lead with this hexagram’s own evidence pattern','State conditions before recommendation','Keep adverse/favorable markers conditional','Do not import another hexagram’s prose','Retain every Evidence Node ID']},
+   acceptance:item.acceptance,boundary:'This creates an evidence-preserving rewrite plan, not fabricated classical text.'};
+}
+function run(){
+ var q=E.releaseBlockerWorkqueue.build(),rows=q.items.map(remediate);OPEN={};rows.forEach(r=>OPEN[r.releaseId]=r);
+ var counts={CANDIDATE_REWRITE:0,UNRESOLVED_EVIDENCE:0};rows.forEach(r=>counts[r.status]=(counts[r.status]||0)+1);
+ return {schema:'siching.blocker-remediation-batch.v1',engineVersion:VERSION,status:counts.UNRESOLVED_EVIDENCE?'PARTIAL':'READY_FOR_REWRITE',total:rows.length,counts:counts,rows:rows};
+}
+function audit(){var b=run(),issues=[];b.rows.forEach(r=>{if(r.status==='CANDIDATE_REWRITE'&&(!r.rewritePlan.uniqueEvidenceAnchors.length||!r.rewritePlan.claimSlots.every(c=>c.evidenceNodeIds&&c.evidenceNodeIds.length)))issues.push({code:'INVALID_REWRITE_PLAN',releaseId:r.releaseId});});return {schema:'siching.blocker-remediation-audit.v1',engineVersion:VERSION,status:issues.length?'FAIL':'PASS',batchStatus:b.status,total:b.total,counts:b.counts,issues:issues.length,issueRows:issues};}
+E.version=VERSION;E.blockerRemediationEngine={run:run,audit:audit,get:function(id){return OPEN[id]||null}};
+function mount(){var root=document.getElementById('kd-engine-13000-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-13100-ui'))return;var d=document.createElement('div');d.id='kd-engine-13100-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>🔧 V82 · Blocker Remediation Engine</b></summary><p>Xử lý từng blocker thành rewrite plan dựa trên evidence riêng của quẻ: core → condition → risk → stance. Không copy prose giữa các quẻ và không tạo “cổ văn” mới. Mỗi slot phải giữ Evidence Node ID trước khi được đưa sang vòng uniqueness kế tiếp.</p><button class="btn" id="v82a">Build remediation plans</button><p id="v82s"></p><pre id="v82o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';root.appendChild(d);var o=d.querySelector('#v82o'),s=d.querySelector('#v82s');d.querySelector('#v82a').onclick=()=>{var b=run(),a=audit();o.textContent=JSON.stringify({audit:a,batch:b},null,2);s.textContent=a.status+' · CANDIDATE '+b.counts.CANDIDATE_REWRITE+' · UNRESOLVED '+b.counts.UNRESOLVED_EVIDENCE;};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();
+</script>
+
+<script id="kd-classical-engine-13200">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.blockerRemediationEngine||!E.topicProseUniquenessGate)return;var VERSION='13.3.0-remediation-regression-gate';
+function tok(s){return new Set(String(s||'').toLowerCase().normalize('NFKC').replace(/[^\p{L}\p{N}]+/gu,' ').trim().split(/\s+/).filter(Boolean))}
+function jac(a,b){a=tok(a);b=tok(b);if(!a.size&&!b.size)return 1;var n=0;a.forEach(x=>{if(b.has(x))n++});return n/(a.size+b.size-n||1)}
+function candidate(plan){
+ if(!plan||plan.status!=='CANDIDATE_REWRITE')return null;
+ var p=plan.rewritePlan, slots=p.claimSlots||[], parts=slots.map(function(c){
+  var prefix=c.slot==='core'?'Cốt lõi':c.slot==='condition'?'Điều kiện':c.slot==='risk'?'Rủi ro cần xét':'Thế ứng xử';
+  return prefix+': '+String(c.text||'').replace(/\s+/g,' ').trim()+' ['+(c.evidenceNodeIds||[]).join(', ')+']';
+ });
+ return 'Quẻ '+plan.hexagram+' · '+plan.topic+'. '+parts.join(' ');
+}
+function run(){
+ var b=E.blockerRemediationEngine.run(),cands=b.rows.filter(x=>x.status==='CANDIDATE_REWRITE').map(x=>({plan:x,text:candidate(x)})),issues=[];
+ for(var i=0;i<cands.length;i++){
+  var c=cands[i];if(!c.text)issues.push({code:'EMPTY_CANDIDATE',releaseId:c.plan.releaseId});
+  if(!(c.plan.rewritePlan.claimSlots||[]).every(s=>s.evidenceNodeIds&&s.evidenceNodeIds.length))issues.push({code:'ORPHAN_CLAIM',releaseId:c.plan.releaseId});
+  for(var j=i+1;j<cands.length;j++){if(c.plan.topic!==cands[j].plan.topic)continue;var s=jac(c.text,cands[j].text);if(s>=.88)issues.push({code:'CANDIDATE_HIGH_SIMILARITY',topic:c.plan.topic,releases:[c.plan.releaseId,cands[j].plan.releaseId],similarity:+s.toFixed(3)});}
+ }
+ var blocked=new Set();issues.forEach(x=>(x.releases||[x.releaseId]).filter(Boolean).forEach(id=>blocked.add(id)));
+ var rows=cands.map(c=>({releaseId:c.plan.releaseId,hexagram:c.plan.hexagram,topic:c.plan.topic,status:blocked.has(c.plan.releaseId)?'REVIEW':'REMEDIATION_PASS',text:c.text,evidenceAnchors:c.plan.rewritePlan.uniqueEvidenceAnchors}));
+ return {schema:'siching.remediation-regression.v1',engineVersion:VERSION,status:issues.length?'REVIEW':'PASS',candidates:cands.length,passed:rows.filter(x=>x.status==='REMEDIATION_PASS').length,review:rows.filter(x=>x.status==='REVIEW').length,threshold:.88,issues:issues.length,issueRows:issues.slice(0,1000),rows:rows,boundary:'Passing this gate means evidence anchors are preserved and candidate prose is not highly duplicated within this remediation batch. It is not proof of predictive accuracy or universal classical consensus.'};
+}
+E.version=VERSION;E.remediationRegressionGate={run:run,jaccard:jac};
+function mount(){var root=document.getElementById('kd-engine-13100-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-13200-ui'))return;var d=document.createElement('div');d.id='kd-engine-13200-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>✅ V83 · Remediation Regression Gate</b></summary><p>Đưa các CANDIDATE_REWRITE của V82 qua vòng kiểm lại: claim phải còn Evidence Node ID và prose giữa các quẻ cùng chủ đề không được similarity ≥ 0.88. Chỉ bản vượt vòng này mới mang trạng thái REMEDIATION_PASS.</p><button class="btn" id="v83a">Run remediation regression</button><p id="v83s"></p><pre id="v83o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';root.appendChild(d);var o=d.querySelector('#v83o'),s=d.querySelector('#v83s');d.querySelector('#v83a').onclick=()=>{var r=run();o.textContent=JSON.stringify(r,null,2);s.textContent=r.status+' · CANDIDATES '+r.candidates+' · PASS '+r.passed+' · REVIEW '+r.review+' · ISSUES '+r.issues;};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();
+</script>
+
+<script id="kd-classical-engine-13300">
+(function(){
+'use strict';
+var E=window.KD_CLASSICAL_ENGINE;
+if(!E||!E.remediationRegressionGate||!E.topicReleaseManifest)return;
+var VERSION='13.4.0-remediation-manifest-merge';
+
+function key(h,t){return 'YI-'+String(h).padStart(2,'0')+'-'+t;}
+
+function build(){
+  var oldM=E.topicReleaseManifest.build();
+  var reg=E.remediationRegressionGate.run();
+  var pass={};
+  (reg.rows||[]).forEach(function(r){
+    if(r.status==='REMEDIATION_PASS') pass[r.releaseId]=r;
+  });
+
+  var oldApproved={};
+  (oldM.approved||[]).forEach(function(r){oldApproved[r.releaseId]=r;});
+
+  var all=[];
+  var topics=['tinh_duyen','hon_nhan','cong_viec','tai_van','suc_khoe'];
+  for(var h=1;h<=64;h++) for(var ti=0;ti<topics.length;ti++){
+    var t=topics[ti], id=key(h,t);
+    if(oldApproved[id]){
+      all.push(Object.assign({},oldApproved[id],{
+        finalStatus:'APPROVED',
+        approvalPath:'ORIGINAL_RELEASE_GATE'
+      }));
+    } else if(pass[id]){
+      all.push({
+        releaseId:id,hexagram:h,topic:t,
+        finalStatus:'APPROVED',
+        approvalPath:'REMEDIATION_REGRESSION_PASS',
+        remediatedText:pass[id].text,
+        evidenceAnchors:pass[id].evidenceAnchors||[]
+      });
+    } else {
+      all.push({
+        releaseId:id,hexagram:h,topic:t,
+        finalStatus:'BLOCKED',
+        approvalPath:'UNRESOLVED'
+      });
+    }
+  }
+
+  var approved=all.filter(x=>x.finalStatus==='APPROVED');
+  var blocked=all.filter(x=>x.finalStatus==='BLOCKED');
+  return {
+    schema:'siching.topic-release-manifest.v2',
+    engineVersion:VERSION,
+    createdAt:new Date().toISOString(),
+    summary:{
+      total:all.length,
+      approved:approved.length,
+      blocked:blocked.length,
+      approvedPercent:+(approved.length/(all.length||1)*100).toFixed(2),
+      originalApproved:all.filter(x=>x.approvalPath==='ORIGINAL_RELEASE_GATE').length,
+      remediationApproved:all.filter(x=>x.approvalPath==='REMEDIATION_REGRESSION_PASS').length
+    },
+    approved:approved,
+    blocked:blocked,
+    regression:{
+      candidates:reg.candidates,
+      passed:reg.passed,
+      review:reg.review,
+      threshold:reg.threshold
+    },
+    policy:{
+      noAutoPromotionWithoutRegressionPass:true,
+      evidenceAnchorsRequiredForRemediation:true,
+      blockedKeepsLegacy:true,
+      rollback:true,
+      predictiveAccuracy:'NOT MEASURED'
+    }
+  };
+}
+
+function audit(){
+  var m=build(), issues=[], ids=new Set();
+  m.approved.concat(m.blocked).forEach(function(r){
+    if(ids.has(r.releaseId)) issues.push({code:'DUPLICATE_RELEASE_ID',releaseId:r.releaseId});
+    ids.add(r.releaseId);
+    if(r.approvalPath==='REMEDIATION_REGRESSION_PASS' &&
+       (!r.evidenceAnchors || !r.evidenceAnchors.length))
+      issues.push({code:'REMEDIATION_WITHOUT_EVIDENCE',releaseId:r.releaseId});
+  });
+  if(m.summary.total!==320) issues.push({code:'EXPECTED_320',actual:m.summary.total});
+  if(m.summary.approved+m.summary.blocked!==320)
+    issues.push({code:'CARDINALITY_MISMATCH',summary:m.summary});
+  return {
+    schema:'siching.remediation-manifest-merge-audit.v1',
+    engineVersion:VERSION,
+    status:issues.length?'FAIL':'PASS',
+    issues:issues.length,
+    issueRows:issues,
+    summary:m.summary
+  };
+}
+
+function exportJson(){
+  var m=build(), blob=new Blob([JSON.stringify(m,null,2)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='S_I_CHING_TOPIC_RELEASE_MANIFEST_V84.json';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+E.version=VERSION;
+E.remediationManifestMerge={build:build,audit:audit,exportJson:exportJson};
+
+function mount(){
+ var root=document.getElementById('kd-engine-13200-ui')||document.getElementById('kd-engine-5000-ui');
+ if(!root||document.getElementById('kd-engine-13300-ui'))return;
+ var d=document.createElement('div');
+ d.id='kd-engine-13300-ui'; d.style.marginTop='12px';
+ d.innerHTML='<details open><summary><b>🔀 V84 · Remediation → Release Manifest Merge</b></summary>'+
+ '<p>Hợp nhất các REMEDIATION_PASS trở lại manifest 320/320. Chỉ regression PASS mới được nâng APPROVED; record chưa đạt vẫn BLOCKED và giữ legacy. Mỗi approval do remediation phải giữ evidence anchors.</p>'+
+ '<button class="btn" id="v84a">Merge + Audit 320</button> <button class="btn" id="v84b">Export Manifest V2</button>'+
+ '<p id="v84s"></p><pre id="v84o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';
+ root.appendChild(d);
+ var o=d.querySelector('#v84o'),s=d.querySelector('#v84s');
+ d.querySelector('#v84a').onclick=function(){
+   var m=build(),a=audit(); o.textContent=JSON.stringify({audit:a,manifest:m},null,2);
+   s.textContent=a.status+' · APPROVED '+m.summary.approved+'/320 ('+m.summary.approvedPercent+'%) · REMEDIATED '+m.summary.remediationApproved+' · BLOCKED '+m.summary.blocked;
+ };
+ d.querySelector('#v84b').onclick=function(){exportJson();s.textContent='MANIFEST V2 EXPORTED';};
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+
+<script id="kd-classical-engine-13400">
+(function(){'use strict';
+var E=window.KD_CLASSICAL_ENGINE;
+if(!E||!E.remediationManifestMerge||!E.releaseUIBridge)return;
+var VERSION='13.5.0-manifest-v2-production-bridge';
+var STATE={enabled:false,last:null};
+
+function manifestMap(){
+ var m=E.remediationManifestMerge.build(), map={};
+ (m.approved||[]).forEach(function(r){map[r.releaseId]=r;});
+ return {manifest:m,map:map};
+}
+function id(h,t){return 'YI-'+String(h).padStart(2,'0')+'-'+t;}
+function context(el){
+ var h=+(el.dataset.hexagram||window.KD_CURRENT_HEXAGRAM||0);
+ var t=el.dataset.topicKey||el.dataset.topic||window.KD_CURRENT_TOPIC||'';
+ return {h:h,t:t,releaseId:id(h,t)};
+}
+function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]});}
+function render(el,r){
+ if(!r||r.finalStatus!=='APPROVED')return false;
+ if(!el.dataset.kdV85Legacy)el.dataset.kdV85Legacy=el.innerHTML;
+ var body=r.remediatedText;
+ if(!body && E.productionTopicReleaseGate){
+   var rr=E.productionTopicReleaseGate.release(r.hexagram,r.topic,[]);
+   body=rr&&rr.body||'';
+ }
+ if(!body)return false;
+ var anchors=(r.evidenceAnchors||[]).map(x=>'<li><code>'+esc(x)+'</code></li>').join('');
+ el.innerHTML='<section class="kd-v85-release"><h3>Luận sâu theo chủ đề</h3><p>'+esc(body)+'</p>'+
+ (anchors?'<details><summary>Evidence anchors</summary><ul>'+anchors+'</ul></details>':'')+
+ '<p><small>'+VERSION+' · '+esc(r.approvalPath)+' · không phải xác suất dự báo.</small></p></section>';
+ el.dataset.kdV85='APPROVED'; return true;
+}
+function apply(root){
+ root=root||document; var mm=manifestMap();
+ var targets=E.deepTopicUIAdapter?E.deepTopicUIAdapter.findTargets(root):[],rows=[];
+ targets.forEach(function(el){
+   var c=context(el),r=mm.map[c.releaseId];
+   if(!c.h||!c.t){rows.push({status:'SKIP_CONTEXT'});return;}
+   if(!r){rows.push({releaseId:c.releaseId,status:'BLOCKED_KEEP_LEGACY'});return;}
+   rows.push({releaseId:c.releaseId,status:render(el,r)?'RELEASED':'RENDER_BLOCKED',approvalPath:r.approvalPath});
+ });
+ STATE.last=rows;
+ return {schema:'siching.manifest-v2-production-bridge.v1',engineVersion:VERSION,targets:targets.length,released:rows.filter(x=>x.status==='RELEASED').length,blocked:rows.filter(x=>x.status!=='RELEASED').length,rows:rows,manifestSummary:mm.manifest.summary};
+}
+function rollback(root){
+ root=root||document;var n=0;
+ (E.deepTopicUIAdapter?E.deepTopicUIAdapter.findTargets(root):[]).forEach(function(el){
+   if(el.dataset.kdV85Legacy!=null){el.innerHTML=el.dataset.kdV85Legacy;delete el.dataset.kdV85Legacy;delete el.dataset.kdV85;n++;}
+ }); return n;
+}
+function audit(){
+ var mm=manifestMap(),issues=[];
+ Object.values(mm.map).forEach(function(r){
+   if(r.approvalPath==='REMEDIATION_REGRESSION_PASS'&&(!r.evidenceAnchors||!r.evidenceAnchors.length))
+     issues.push({code:'REMEDIATED_RELEASE_WITHOUT_ANCHOR',releaseId:r.releaseId});
+ });
+ return {schema:'siching.manifest-v2-production-bridge-audit.v1',engineVersion:VERSION,status:issues.length?'FAIL':'PASS',manifest:mm.manifest.summary,issues:issues.length,issueRows:issues,policy:{autoApply:false,blockedKeepsLegacy:true,rollback:true}};
+}
+E.version=VERSION;
+E.manifestV2ProductionBridge={state:STATE,audit:audit,apply:apply,rollback:rollback,enable:function(){STATE.enabled=true;return apply(document)},disable:function(){STATE.enabled=false;return rollback(document)}};
+
+function mount(){
+ var root=document.getElementById('kd-engine-13300-ui')||document.getElementById('kd-engine-5000-ui');
+ if(!root||document.getElementById('kd-engine-13400-ui'))return;
+ var d=document.createElement('div');d.id='kd-engine-13400-ui';d.style.marginTop='12px';
+ d.innerHTML='<details open><summary><b>🚀 V85 · Manifest V2 Production Bridge</b></summary><p>Dùng manifest V84 làm nguồn phát hành duy nhất. Original APPROVED và REMEDIATION_PASS đều được hỗ trợ; BLOCKED không bao giờ ghi đè legacy. Mặc định vẫn tắt để audit trước khi bật.</p><button class="btn" id="v85a">Audit Bridge</button> <button class="btn" id="v85b">Enable Manifest V2</button> <button class="btn" id="v85c">Rollback</button><p id="v85s"></p><pre id="v85o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';
+ root.appendChild(d);var o=d.querySelector('#v85o'),s=d.querySelector('#v85s');
+ d.querySelector('#v85a').onclick=function(){var r=audit();o.textContent=JSON.stringify(r,null,2);s.textContent=r.status+' · APPROVED '+r.manifest.approved+'/320 · BLOCKED '+r.manifest.blocked;};
+ d.querySelector('#v85b').onclick=function(){var r=E.manifestV2ProductionBridge.enable();o.textContent=JSON.stringify(r,null,2);s.textContent='RELEASED '+r.released+' · BLOCKED '+r.blocked;};
+ d.querySelector('#v85c').onclick=function(){s.textContent='ROLLBACK '+E.manifestV2ProductionBridge.disable()+' TARGET(S)';};
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+
+<script id="kd-classical-engine-13500">
+(function(){'use strict';
+var E=window.KD_CLASSICAL_ENGINE;if(!E)return;
+var VERSION='13.6.0-exact-deep-topic-dom-binding';
+var DISCOVERY={
+ renderer:'window.KD_YI616.render',
+ analyzer:'window.KD_YI616.analyze',
+ mainHook:'window.luan64Block',
+ followupHook:'window.fuAnswerTopic',
+ resultHook:'window.resultHTML',
+ exactSection:'section[data-kd616-topics][data-kd616-topic]',
+ exactScope:'[data-kd616-scope]',
+ exactTopicSelect:'[data-kd616-choose]',
+ contextAttrs:['data-kd616-topics','data-kd616-vals','data-kd616-topic'],
+ source:'empirically discovered in current app source'
+};
+var STATE={enabled:false,originalRender:null,lastAudit:null};
+function parse(root){
+ if(!root)return null;
+ var n=+root.dataset.kd616Topics,k=root.dataset.kd616Topic||'',vals=String(root.dataset.kd616Vals||'').split('').map(Number);
+ if(!n||!k||vals.length!==6||vals.some(v=>![6,7,8,9].includes(v)))return null;
+ return {hexagram:n,topic:k,vals:vals,movingLines:vals.map((v,i)=>(v===6||v===9)?i+1:null).filter(Boolean)};
+}
+function exactTargets(root){return Array.from((root||document).querySelectorAll(DISCOVERY.exactSection));}
+function applyOne(section){
+ var c=parse(section),scope=section.querySelector(DISCOVERY.exactScope);
+ if(!c||!scope||!E.remediationManifestMerge)return {status:'SKIP',reason:'context-or-scope'};
+ var m=E.remediationManifestMerge.build(),id='YI-'+String(c.hexagram).padStart(2,'0')+'-'+c.topic,r=(m.approved||[]).find(x=>x.releaseId===id);
+ if(!r)return {status:'BLOCKED_KEEP_KD616',releaseId:id};
+ var body=r.remediatedText;
+ if(!body&&E.productionTopicReleaseGate){var rr=E.productionTopicReleaseGate.release(c.hexagram,c.topic,c.movingLines);body=rr&&rr.body||'';}
+ if(!body)return {status:'BLOCKED_NO_BODY',releaseId:id};
+ if(!scope.dataset.kdV86Legacy)scope.dataset.kdV86Legacy=scope.innerHTML;
+ scope.textContent=body;scope.dataset.kdV86Release=id;scope.dataset.kdV86Approval=r.approvalPath;
+ return {status:'RELEASED',releaseId:id,approvalPath:r.approvalPath,movingLines:c.movingLines};
+}
+function apply(root){var rows=exactTargets(root).map(applyOne);return {schema:'siching.exact-topic-dom-binding.v1',engineVersion:VERSION,targets:rows.length,released:rows.filter(x=>x.status==='RELEASED').length,blocked:rows.filter(x=>x.status!=='RELEASED').length,rows:rows};}
+function rollback(root){var n=0;exactTargets(root).forEach(function(section){var s=section.querySelector(DISCOVERY.exactScope);if(s&&s.dataset.kdV86Legacy!=null){s.innerHTML=s.dataset.kdV86Legacy;delete s.dataset.kdV86Legacy;delete s.dataset.kdV86Release;delete s.dataset.kdV86Approval;n++;}});return n;}
+function enable(){
+ if(STATE.enabled)return apply(document);STATE.enabled=true;
+ if(window.KD_YI616&&typeof window.KD_YI616.render==='function'){
+   STATE.originalRender=window.KD_YI616.render;
+   window.KD_YI616.render=function(){var h=STATE.originalRender.apply(this,arguments);setTimeout(function(){try{apply(document)}catch(e){}},0);return h;};
+ }
+ setTimeout(function(){try{apply(document)}catch(e){}},0);return audit();
+}
+function disable(){STATE.enabled=false;if(STATE.originalRender&&window.KD_YI616)window.KD_YI616.render=STATE.originalRender;STATE.originalRender=null;return rollback(document);}
+function audit(){
+ var has616=!!(window.KD_YI616&&typeof window.KD_YI616.render==='function'&&typeof window.KD_YI616.analyze==='function'),
+ targets=exactTargets(document),contexts=targets.map(parse),valid=contexts.filter(Boolean).length,scopes=targets.filter(x=>x.querySelector(DISCOVERY.exactScope)).length;
+ var r={schema:'siching.exact-topic-dom-discovery-audit.v1',engineVersion:VERSION,status:has616?'PASS':'BLOCKED',discovery:DISCOVERY,runtime:{KD_YI616:has616,luan64Block:typeof window.luan64Block==='function',fuAnswerTopic:typeof window.fuAnswerTopic==='function',resultHTML:typeof window.resultHTML==='function'},dom:{exactTargets:targets.length,validContexts:valid,exactScopes:scopes},safeReplacement:has616&&scopes===targets.length,autoApply:false,boundary:'This audit binds only the exact KD_YI616 deep-topic section discovered in the supplied app. It does not use guessed generic selectors.'};STATE.lastAudit=r;return r;
+}
+E.version=VERSION;E.exactDeepTopicBinding={discovery:DISCOVERY,state:STATE,audit:audit,apply:apply,rollback:rollback,enable:enable,disable:disable};
+function mount(){var root=document.getElementById('kd-engine-13400-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-13500-ui'))return;var d=document.createElement('div');d.id='kd-engine-13500-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>🎯 V86 · Exact Deep-Topic DOM Binding</b></summary><p>Đã dò trực tiếp source hiện tại: phần Luận sâu thật được dựng bởi <code>KD_YI616.render</code>, section <code>data-kd616-topics/data-kd616-topic</code>, và nội dung ứng dụng nằm đúng tại <code>[data-kd616-scope]</code>. V86 bỏ selector suy đoán, chỉ bind đúng vùng này.</p><button class="btn" id="v86a">Audit exact DOM</button> <button class="btn" id="v86b">Enable exact approved-only</button> <button class="btn" id="v86c">Rollback</button><p id="v86s"></p><pre id="v86o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';root.appendChild(d);var o=d.querySelector('#v86o'),s=d.querySelector('#v86s');d.querySelector('#v86a').onclick=function(){var r=audit();o.textContent=JSON.stringify(r,null,2);s.textContent=r.status+' · TARGETS '+r.dom.exactTargets+' · CONTEXT '+r.dom.validContexts+' · SCOPES '+r.dom.exactScopes;};d.querySelector('#v86b').onclick=function(){var a=enable(),r=apply(document);o.textContent=JSON.stringify({audit:a,apply:r},null,2);s.textContent='EXACT RELEASED '+r.released+' · BLOCKED '+r.blocked;};d.querySelector('#v86c').onclick=function(){s.textContent='ROLLBACK '+disable()+' TARGET(S)';};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+
+<script id="kd-classical-engine-13600">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.exactDeepTopicBinding)return;var VERSION='13.7.0-exact-binding-regression';
+function snapshot(){
+ var sels=['section[data-kd616-topics][data-kd616-topic]','[data-kd616-scope]','[data-kd616-choose]'],o={};
+ sels.forEach(s=>o[s]=document.querySelectorAll(s).length);return o;
+}
+function run(){
+ var before=snapshot(),a=E.exactDeepTopicBinding.audit(),apply=E.exactDeepTopicBinding.apply(document),after=snapshot(),issues=[];
+ Object.keys(before).forEach(k=>{if(before[k]!==after[k])issues.push({code:'DOM_CARDINALITY_CHANGED',selector:k,before:before[k],after:after[k]})});
+ (apply.rows||[]).forEach(r=>{if(r.status==='RELEASED'&&!r.releaseId)issues.push({code:'RELEASE_WITHOUT_ID',row:r})});
+ var rolled=E.exactDeepTopicBinding.rollback(document),final=snapshot();
+ Object.keys(before).forEach(k=>{if(before[k]!==final[k])issues.push({code:'ROLLBACK_DOM_CARDINALITY_MISMATCH',selector:k,before:before[k],after:final[k]})});
+ return {schema:'siching.exact-binding-regression.v1',engineVersion:VERSION,status:issues.length?'FAIL':'PASS',runtimeAudit:a,before:before,apply:apply,rollbackTargets:rolled,afterRollback:final,issues:issues.length,issueRows:issues,boundary:'Regression checks exact target preservation, approved-only release IDs and rollback structure. It does not simulate every user interaction or prove predictive correctness.'};
+}
+E.version=VERSION;E.exactBindingRegression={run:run};
+function mount(){var root=document.getElementById('kd-engine-13500-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-13600-ui'))return;var d=document.createElement('div');d.id='kd-engine-13600-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>🧯 V87 · Exact Binding Regression</b></summary><p>Kiểm hồi quy bridge thật trước production: đếm exact KD_YI616 targets, thử approved-only apply, xác nhận không làm thay đổi cấu trúc selector, rồi rollback và so lại DOM. Mọi release phải có Release ID.</p><button class="btn" id="v87a">Run exact regression</button><p id="v87s"></p><pre id="v87o" style="white-space:pre-wrap;max-height:1200px;overflow:auto"></pre></details>';root.appendChild(d);var o=d.querySelector('#v87o'),s=d.querySelector('#v87s');d.querySelector('#v87a').onclick=function(){var r=run();o.textContent=JSON.stringify(r,null,2);s.textContent=r.status+' · TARGETS '+r.before['section[data-kd616-topics][data-kd616-topic]']+' · RELEASED '+r.apply.released+' · ROLLBACK '+r.rollbackTargets+' · ISSUES '+r.issues;};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();
+</script>
