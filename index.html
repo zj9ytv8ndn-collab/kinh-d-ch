@@ -15131,3 +15131,58 @@ if(window.MutationObserver){
 }
 window.KD_TAB_NAVIGATION_FIX_V336={version:'4.11-v336',apply:apply,hold:hold,status:'ROOT_FIX_DATA_S_AND_KD359_NAV'};
 })();</script>
+
+<script id="kd-cast-state-reset-fix-v337">
+(function(){'use strict';
+var NON_CAST=['scr-home','scr-kymon','scr-thaiat','scr-tuvi','scr-battu','scr-lucnham','scr-astrology','scr-study'];
+var casting=false;
+function clearCastOwnership(){
+ casting=false;
+ var app=document.getElementById('app');
+ if(app){
+   app.classList.remove('casting','cast-open','result-open','kd-casting','kd-result-open');
+   app.removeAttribute('data-casting'); app.removeAttribute('data-cast-open'); app.removeAttribute('data-result-open');
+ }
+ document.documentElement.classList.remove('casting','cast-open','result-open','kd-casting','kd-result-open');
+ if(document.body)document.body.classList.remove('casting','cast-open','result-open','kd-casting','kd-result-open');
+ ['kdActiveScreen','activeScreen','currentScreen','kd359Screen','kd351Screen','lastScreen'].forEach(function(k){
+   try{if(localStorage.getItem(k)==='scr-cast')localStorage.removeItem(k)}catch(e){}
+   try{if(sessionStorage.getItem(k)==='scr-cast')sessionStorage.removeItem(k)}catch(e){}
+ });
+}
+function forceScreen(id){
+ if(!id||id==='scr-cast')return;
+ clearCastOwnership();
+ var t=document.getElementById(id); if(!t)return;
+ document.querySelectorAll('.screen').forEach(function(x){
+   var on=x===t;x.classList.toggle('active',on);
+   if(on){x.removeAttribute('hidden');x.setAttribute('aria-hidden','false')}
+   else{x.setAttribute('aria-hidden','true')}
+ });
+ document.querySelectorAll('#tabs [data-s]').forEach(function(x){
+   var on=x.getAttribute('data-s')===id;x.classList.toggle('on',on);x.setAttribute('aria-selected',on?'true':'false');
+ });
+ var app=document.getElementById('app');if(app)app.setAttribute('data-kd359-screen',id);
+ try{history.replaceState(history.state,'',location.pathname+location.search+(id==='scr-home'?'':'#'+id))}catch(e){}
+}
+function requested(el){
+ if(!el||!el.closest)return null;
+ var n=el.closest('[data-s],[data-kd351-target],[data-kd359-target],a[href^="#scr-"]');
+ if(!n)return null;
+ return n.getAttribute('data-s')||n.getAttribute('data-kd351-target')||n.getAttribute('data-kd359-target')||(n.getAttribute('href')||'').replace(/^#/,'');
+}
+document.addEventListener('click',function(e){
+ var id=requested(e.target);if(!id)return;
+ if(id==='scr-cast'){casting=true;return}
+ if(id.indexOf('scr-')===0){
+   clearCastOwnership();
+   [0,1,16,50,120,300,700,1200,2000].forEach(function(ms){setTimeout(function(){forceScreen(id)},ms)});
+ }
+},true);
+/* Home is a hard reset boundary: after returning home, a previous casting result may no longer own routing. */
+document.addEventListener('click',function(e){
+ var id=requested(e.target);if(id==='scr-home')clearCastOwnership();
+},true);
+window.addEventListener('popstate',function(){var h=(location.hash||'').slice(1);if(h&&h!=='scr-cast')forceScreen(h)},true);
+window.KD_CAST_STATE_RESET_V337={version:'4.11-v337',clear:clearCastOwnership,forceScreen:forceScreen,status:'CAST_RESULT_ROUTING_STATE_RESET_ON_HOME_AND_DISCIPLINE_NAV'};
+})();</script>
