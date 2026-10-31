@@ -15228,3 +15228,48 @@ window.KD_UI_SOURCE_PROFILE_V297={restore:restore,status:'USER_SOURCE_PROFILE_RE
 })();
 </script>
 
+
+
+<style id="kd-source-profile-v298-css">
+details[data-kd-source-profile-fixed="1"]{display:block!important;visibility:visible!important;opacity:1!important}
+details[data-kd-source-profile-fixed="1"]>.kd-source-profile-readable{display:block!important;margin-top:10px}
+.kd-source-profile-readable{padding:10px 12px;border:1px solid currentColor;border-radius:10px}
+.kd-source-profile-readable .row{display:grid;grid-template-columns:minmax(110px,32%) 1fr;gap:8px;padding:5px 0}
+.kd-source-profile-readable .key{font-weight:700}
+details[data-kd-source-profile-fixed="1"]>pre{display:none!important}
+</style>
+<script id="kd-source-profile-v298-script">
+(function(){
+'use strict';
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function label(k){return ({method:'Phép chọn lời',version:'Phiên bản',baseHexagram:'Bản quẻ',changedHexagram:'Quẻ biến',movingLines:'Hào động',unchangedLines:'Hào tĩnh',priority:'Thứ tự ưu tiên',basis:'Cơ sở quy tắc',scope:'Phạm vi',title:'Nguồn',chapter:'Chương',author:'Tác giả',supplement:'Bổ chú',accessedAt:'Ngày đối chiếu',facsimileVerified:'Đã kiểm ảnh bản gốc',diagramOrderVerified:'Đã kiểm thứ tự đồ'})[k]||k;}
+function val(v){if(Array.isArray(v))return v.length?v.join(', '):'—';if(v===true)return 'Có';if(v===false)return 'Chưa';if(v==null||v==='')return '—';return String(v);}
+function row(k,v){return '<div class="row"><div class="key">'+esc(label(k))+'</div><div>'+esc(val(v))+'</div></div>';}
+function build(o){
+ var h='';
+ ['method','version','baseHexagram','changedHexagram','movingLines','unchangedLines','priority','basis'].forEach(function(k){if(k in o)h+=row(k,o[k]);});
+ if(o.source){h+='<div class="row"><div class="key">Hồ sơ nguồn</div><div></div></div>';['title','chapter','author','supplement','accessedAt','facsimileVerified','diagramOrderVerified'].forEach(function(k){if(k in o.source)h+=row(k,o.source[k]);});}
+ if('scope' in o)h+=row('scope',o.scope);
+ return h;
+}
+function fix(){
+ document.querySelectorAll('details').forEach(function(d){
+   var s=d.querySelector(':scope > summary'); if(!s||!/Quy tắc chọn lời và hồ sơ nguồn/i.test(s.textContent||''))return;
+   d.removeAttribute('data-kd-debug'); d.removeAttribute('data-kd-json');
+   d.setAttribute('data-kd-source-profile-fixed','1');
+   d.style.setProperty('display','block','important');
+   var pre=d.querySelector(':scope > pre'); if(!pre)return;
+   var o=null;try{o=JSON.parse(pre.textContent||'');}catch(e){}
+   var box=d.querySelector(':scope > .kd-source-profile-readable');
+   if(!box){box=document.createElement('div');box.className='kd-source-profile-readable';pre.parentNode.insertBefore(box,pre);}
+   if(o)box.innerHTML=build(o);
+   else box.innerHTML='<div class="row"><div class="key">Trạng thái</div><div>Không đọc được hồ sơ nguồn của lần gieo này.</div></div>';
+   pre.style.setProperty('display','none','important');
+ });
+}
+function boot(){fix();new MutationObserver(fix).observe(document.documentElement,{childList:true,subtree:true});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+window.KD_UI_SOURCE_PROFILE_V298={fix:fix,status:'SOURCE_PROFILE_READABLE_DATA_RESTORED'};
+})();
+</script>
+
