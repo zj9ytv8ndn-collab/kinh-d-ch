@@ -15083,3 +15083,51 @@ document.addEventListener('click',function(e){var n=navInfo(e.target);if(!n)retu
 window.addEventListener('hashchange',closeResult,true);
 window.KD_TAB_NAVIGATION_FIX_V335={version:'4.11-v335',closeResult:closeResult,activate:activate,status:'FIXED_CAST_RESULT_TAB_LOCK'};
 })();</script>
+
+<script id="kd-tab-navigation-root-fix-v336">
+(function(){'use strict';
+var lastTarget=null, lockUntil=0, timer=0;
+function targetFrom(el){
+ if(!el||!el.closest)return null;
+ var n=el.closest('#tabs [data-s],[data-kd351-target],[data-kd359-target]');
+ if(!n)return null;
+ return n.getAttribute('data-s')||n.getAttribute('data-kd351-target')||n.getAttribute('data-kd359-target');
+}
+function apply(id){
+ var screen=document.getElementById(id);
+ if(!screen||!screen.classList.contains('screen'))return false;
+ document.querySelectorAll('.screen').forEach(function(x){
+   var on=x===screen;
+   x.classList.toggle('active',on);
+   if(on){x.removeAttribute('hidden');x.setAttribute('aria-hidden','false');}
+   else{x.setAttribute('aria-hidden','true');}
+ });
+ document.querySelectorAll('#tabs [data-s]').forEach(function(x){
+   var on=x.getAttribute('data-s')===id;
+   x.classList.toggle('on',on);x.setAttribute('aria-current',on?'page':'false');
+ });
+ var app=document.getElementById('app');if(app)app.setAttribute('data-kd359-screen',id);
+ try{if(window.KD_LAZY494)window.KD_LAZY494.open(id)}catch(e){}
+ try{if(window.KD_UI359&&window.KD_UI359.sync)window.KD_UI359.sync()}catch(e){}
+ return document.querySelector('.screen.active')===screen;
+}
+function hold(id){
+ lastTarget=id;lockUntil=Date.now()+1400;
+ [0,16,60,180,420,900,1350].forEach(function(ms){setTimeout(function(){
+   if(lastTarget===id&&Date.now()<=lockUntil+50)apply(id);
+ },ms);});
+}
+document.addEventListener('click',function(e){
+ var id=targetFrom(e.target);if(!id)return;
+ if(id==='scr-cast'){lastTarget=null;lockUntil=0;return;}
+ hold(id);
+},true);
+if(window.MutationObserver){
+ new MutationObserver(function(){
+   if(!lastTarget||Date.now()>lockUntil)return;
+   var a=document.querySelector('.screen.active');
+   if(!a||a.id!==lastTarget)apply(lastTarget);
+ }).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class','hidden']});
+}
+window.KD_TAB_NAVIGATION_FIX_V336={version:'4.11-v336',apply:apply,hold:hold,status:'ROOT_FIX_DATA_S_AND_KD359_NAV'};
+})();</script>
