@@ -15258,3 +15258,44 @@ new MutationObserver(function(){
 mark(document.querySelector('.screen.active')?.id||'scr-home');
 window.KD_HARD_CAST_ISOLATION_V338={version:'4.11-v338',switchTo:hardSwitch,getCurrent:function(){return current},status:'CAST_SCREEN_HARD_HIDDEN_OUTSIDE_CAST'};
 })();</script>
+
+<style id="kd-v339-cast-restore-style">
+/* V339: V338 used inline display:none!important. When scr-cast is selected
+   again it must be explicitly restored, otherwise the active screen is black. */
+html[data-kd-v338-screen="scr-cast"] #scr-cast{
+ display:block!important; visibility:visible!important; pointer-events:auto!important;
+ position:relative!important; left:auto!important; top:auto!important;
+ width:auto!important; height:auto!important; max-height:none!important; overflow:visible!important;
+}
+</style>
+<script id="kd-v339-cast-restore">
+(function(){'use strict';
+function restoreCast(){
+ var c=document.getElementById('scr-cast');if(!c)return false;
+ document.documentElement.setAttribute('data-kd-v338-screen','scr-cast');
+ var app=document.getElementById('app');if(app){app.setAttribute('data-kd-v338-screen','scr-cast');app.setAttribute('data-kd359-screen','scr-cast')}
+ /* remove the inline !important left by V338 */
+ ['display','visibility','pointer-events','position','left','top','width','height','max-height','overflow'].forEach(function(p){c.style.removeProperty(p)});
+ c.removeAttribute('hidden');c.setAttribute('aria-hidden','false');
+ c.classList.add('active','show','visible');
+ document.querySelectorAll('.screen').forEach(function(x){
+   if(x===c)return;
+   x.classList.remove('active','show','visible');x.setAttribute('aria-hidden','true');
+ });
+ document.querySelectorAll('#tabs [data-s]').forEach(function(x){
+   var on=x.getAttribute('data-s')==='scr-cast';x.classList.toggle('on',on);x.classList.toggle('active',on);
+ });
+ try{if(window.KD_LAZY494)window.KD_LAZY494.open('scr-cast')}catch(e){}
+ return true;
+}
+function navId(el){
+ if(!el||!el.closest)return '';
+ var n=el.closest('[data-s],[data-kd351-target],[data-kd359-target],a[href^="#scr-"]');if(!n)return '';
+ return n.getAttribute('data-s')||n.getAttribute('data-kd351-target')||n.getAttribute('data-kd359-target')||(n.getAttribute('href')||'').replace(/^#/,'');
+}
+document.addEventListener('click',function(e){
+ if(navId(e.target)!=='scr-cast')return;
+ [0,1,16,50,120,300].forEach(function(ms){setTimeout(restoreCast,ms)});
+},true);
+window.KD_CAST_RESTORE_V339={version:'4.11-v339',restore:restoreCast,status:'CAST_SCREEN_RESTORED_AFTER_HARD_ISOLATION'};
+})();</script>
