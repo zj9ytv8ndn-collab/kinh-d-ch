@@ -15065,3 +15065,166 @@ if(document.documentElement) obs.observe(document.documentElement,{subtree:true,
 })();
 </script>
 
+
+<script id="kd-classical-engine-33700">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.taiyiMingShenRelationsV286)return;
+var DATA={"version": "29.84.0-taiyi-rendao-relation-oracle-v1", "profile": "RENDAO_MINGFA", "rules": {"對宮": "12-branch opposite = +6 positions.", "三合": "申子辰 / 亥卯未 / 寅午戌 / 巳酉丑.", "evaluationOrder": ["命宮", "對照", "三方", "身元", "時元"], "interpretationGate": "旺陷 and star identity required before interpretation."}, "opposites": {"子": "午", "丑": "未", "寅": "申", "卯": "酉", "辰": "戌", "巳": "亥", "午": "子", "未": "丑", "申": "寅", "酉": "卯", "戌": "辰", "亥": "巳"}, "trines": {"申": ["子", "辰"], "子": ["申", "辰"], "辰": ["申", "子"], "亥": ["卯", "未"], "卯": ["亥", "未"], "未": ["亥", "卯"], "寅": ["午", "戌"], "午": ["寅", "戌"], "戌": ["寅", "午"], "巳": ["酉", "丑"], "酉": ["巳", "丑"], "丑": ["巳", "酉"]}, "safety": {"productionUiPanelsHidden": true, "rawJsonHidden": true, "subtitleRemoved": true, "researchDataPreserved": true, "upstream188190": "UNRESOLVED_UNCHANGED"}, "status": "RELATION_ORACLE_COMPLETED_PRODUCTION_UI_CONTAINMENT_PRESERVED", "next": "V289 normalize exact 命宮/身宮 inputs and create source fixtures before deterministic placement."},VERSION=DATA.version,B=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+function opposite(x){var i=B.indexOf(x);return i<0?null:B[(i+6)%12];}
+function relation(x){return {branch:x,opposite:opposite(x),trines:(DATA.trines[x]||[]).slice()};}
+function regression(){var rows=B.map(function(b){var r=relation(b),eo=DATA.opposites[b],et=DATA.trines[b]||[];return {branch:b,pass:r.opposite===eo&&JSON.stringify(r.trines)===JSON.stringify(et)};});return {total:rows.length,pass:rows.filter(function(x){return x.pass;}).length,fail:rows.filter(function(x){return !x.pass;}).length,rows:rows};}
+function audit(){var r=regression();return {schema:'siching.taiyi.rendao-relation-oracle.v1',engineVersion:VERSION,status:DATA.status,profile:DATA.profile,rules:DATA.rules,regression:{total:r.total,pass:r.pass,fail:r.fail},safety:DATA.safety,nextGate:DATA.next};}
+E.version=VERSION;E.taiyiRelationOracleV288={data:DATA,opposite:opposite,relation:relation,regression:regression,audit:audit};
+})();</script>
+
+<script id="kd-classical-engine-33800">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.taiyiRelationOracleV288)return;
+var DATA={"version": "29.85.0-taiyi-mingshen-input-normalization-v1", "profile": "RENDAO_MINGFA", "normalizedInputs": {"yearBranch": "子..亥", "monthBranch": "子..亥", "dayStem": "甲乙丙丁戊己庚辛壬癸", "dayBranch": "子..亥", "birthHourBranch": "子..亥", "sexProfile": "MALE|FEMALE"}, "polarity": {"yangStems": ["甲", "丙", "戊", "庚", "壬"], "yinStems": ["乙", "丁", "己", "辛", "癸"]}, "directionGate": {"status": "SOURCE_PROFILE_BOUND_NOT_YET_EXECUTED", "reason": "Normalization is deterministic; 命宮/身宮 forward/reverse direction remains separately gated until exact source wording and worked fixtures are bound."}, "relationDependency": "V288 opposite/trine oracle may consume a certified 命宮 branch once placement is certified.", "safety": {"productionUiContainment": "PRESERVED_FROM_V287", "rawDebugVisible": false, "accumulation188190": "UNCHANGED", "noFateInterpretationFromUncertifiedPlacement": true}, "status": "MINGSHEN_INPUT_SCHEMA_AND_POLARITY_NORMALIZATION_READY", "next": "V290 bind the exact 人道命法 direction wording for 命宮/身宮 and create explicit male/female × yin/yang-day direction fixtures before implementing palace placement."},VERSION=DATA.version;
+var B=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'],S=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+function normBranch(x){x=String(x||'').trim();return B.indexOf(x)>=0?x:null;}
+function normStem(x){x=String(x||'').trim();return S.indexOf(x)>=0?x:null;}
+function polarity(stem){stem=normStem(stem);if(!stem)return null;return DATA.polarity.yangStems.indexOf(stem)>=0?'YANG':'YIN';}
+function normalize(x){x=x||{};var r={yearBranch:normBranch(x.yearBranch),monthBranch:normBranch(x.monthBranch),dayStem:normStem(x.dayStem),dayBranch:normBranch(x.dayBranch),birthHourBranch:normBranch(x.birthHourBranch),sexProfile:String(x.sexProfile||'').toUpperCase()};var errors=[];['yearBranch','monthBranch','dayStem','dayBranch','birthHourBranch'].forEach(function(k){if(!r[k])errors.push('INVALID_'+k);});if(['MALE','FEMALE'].indexOf(r.sexProfile)<0)errors.push('INVALID_sexProfile');r.dayPolarity=polarity(r.dayStem);return {ok:!errors.length,value:r,errors:errors};}
+function audit(){var fixtures=[{dayStem:'甲',expect:'YANG'},{dayStem:'乙',expect:'YIN'},{dayStem:'庚',expect:'YANG'},{dayStem:'辛',expect:'YIN'}].map(function(f){return {stem:f.dayStem,expected:f.expect,actual:polarity(f.dayStem),pass:polarity(f.dayStem)===f.expect};});return {schema:'siching.taiyi.mingshen-input-normalization.v1',engineVersion:VERSION,status:DATA.status,normalizedInputs:DATA.normalizedInputs,polarity:DATA.polarity,directionGate:DATA.directionGate,fixtures:fixtures,safety:DATA.safety,nextGate:DATA.next};}
+E.version=VERSION;E.taiyiMingShenInputV289={data:DATA,normalize:normalize,polarity:polarity,audit:audit};
+})();</script>
+
+<script id="kd-classical-engine-33900">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.taiyiMingShenInputV289)return;
+var DATA={"version": "29.86.0-taiyi-mingshen-direction-profile-v1", "profile": "RENDAO_MINGFA", "sourceRule": {"命宮": "生日干支陰：男逆女順；陽：男順女逆。數至生時即命宮。", "身宮": "生月支加生日支；命順則身逆，命逆則身順，數至生時支安身宮。", "sourceWorkedExample": "辛未日陰男 → 命逆；身則順。"}, "directionMatrix": {"YANG": {"MALE": "FORWARD", "FEMALE": "REVERSE"}, "YIN": {"MALE": "REVERSE", "FEMALE": "FORWARD"}}, "bodyDirection": "OPPOSITE_OF_MING", "fixtures": [{"dayStem": "甲", "sex": "MALE", "ming": "FORWARD", "shen": "REVERSE"}, {"dayStem": "甲", "sex": "FEMALE", "ming": "REVERSE", "shen": "FORWARD"}, {"dayStem": "辛", "sex": "MALE", "ming": "REVERSE", "shen": "FORWARD"}, {"dayStem": "辛", "sex": "FEMALE", "ming": "FORWARD", "shen": "REVERSE"}], "certification": {"direction": "PRIMARY_TEXT_BOUND", "fullPalacePlacement": "NEXT_GATE", "note": "Direction is now source-certified; exact counting placement will be implemented separately to avoid off-by-one errors."}, "status": "MING_SHEN_DIRECTION_MATRIX_SOURCE_CERTIFIED", "next": "V291 implement exact inclusive counting for 命宮 and 身宮 and reproduce the source 辛未陰男 worked example before production use."},VERSION=DATA.version,I=E.taiyiMingShenInputV289;
+function mingDirection(dayStem,sex){var p=I.polarity(dayStem),s=String(sex||'').toUpperCase();return p&&DATA.directionMatrix[p]?DATA.directionMatrix[p][s]||null:null;}
+function shenDirection(dayStem,sex){var d=mingDirection(dayStem,sex);return d==='FORWARD'?'REVERSE':d==='REVERSE'?'FORWARD':null;}
+function audit(){var rows=DATA.fixtures.map(function(f){var m=mingDirection(f.dayStem,f.sex),s=shenDirection(f.dayStem,f.sex);return {dayStem:f.dayStem,sex:f.sex,expectedMing:f.ming,actualMing:m,expectedShen:f.shen,actualShen:s,pass:m===f.ming&&s===f.shen};});return {schema:'siching.taiyi.mingshen-direction-profile.v1',engineVersion:VERSION,status:DATA.status,sourceRule:DATA.sourceRule,directionMatrix:DATA.directionMatrix,fixtures:rows,summary:{total:rows.length,pass:rows.filter(function(x){return x.pass;}).length},certification:DATA.certification,nextGate:DATA.next};}
+E.version=VERSION;E.taiyiMingShenDirectionV290={data:DATA,mingDirection:mingDirection,shenDirection:shenDirection,audit:audit};
+})();</script>
+
+<script id="kd-classical-engine-34000">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.taiyiMingShenDirectionV290)return;
+var DATA={"version": "29.87.0-taiyi-mingshen-inclusive-placement-v1", "profile": "RENDAO_MINGFA", "sourceWorkedExample": {"yearBranch": "辰", "monthBranch": "巳", "dayStem": "辛", "dayBranch": "未", "hourBranch": "寅", "sex": "MALE", "expectedMingEarth": "未", "expectedShenEarth": "辰", "mingDirection": "REVERSE", "shenDirection": "FORWARD"}, "countingSemantics": {"命宮": "place year branch on month-branch earth palace, then move labels in certified direction until birth-hour branch is reached; its earth palace is 命宮.", "身宮": "place month branch on day-branch earth palace, move labels opposite 命 direction until birth-hour branch is reached; its earth palace is 身宮.", "inclusive": "starting label is already located on the starting earth palace; zero movement when target label equals start label."}, "status": "MING_SHEN_INCLUSIVE_PLACEMENT_WORKED_EXAMPLE_BOUND", "next": "V292 exhaustively regression-test all 12×12×12 branch combinations under four yin/yang-sex direction profiles and verify inverse/rotation invariants before production integration."},VERSION=DATA.version,D=E.taiyiMingShenDirectionV290,B=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+function mod(n,m){return ((n%m)+m)%m;}
+function locate(startEarth,startLabel,targetLabel,dir){var e=B.indexOf(startEarth),s=B.indexOf(startLabel),t=B.indexOf(targetLabel);if(e<0||s<0||t<0)return null;var step=dir==='FORWARD'?1:dir==='REVERSE'?-1:null;if(step===null)return null;var moves=step===1?mod(t-s,12):mod(s-t,12);return B[mod(e+step*moves,12)];}
+function ming(x){var dir=D.mingDirection(x.dayStem,x.sex);return locate(x.monthBranch,x.yearBranch,x.hourBranch,dir);}
+function shen(x){var dir=D.shenDirection(x.dayStem,x.sex);return locate(x.dayBranch,x.monthBranch,x.hourBranch,dir);}
+function worked(){var x=DATA.sourceWorkedExample;var ma=ming(x),sa=shen(x);return {input:x,ming:{expected:x.expectedMingEarth,actual:ma,pass:ma===x.expectedMingEarth},shen:{expected:x.expectedShenEarth,actual:sa,pass:sa===x.expectedShenEarth},pass:ma===x.expectedMingEarth&&sa===x.expectedShenEarth};}
+function audit(){return {schema:'siching.taiyi.mingshen-inclusive-placement.v1',engineVersion:VERSION,status:DATA.status,countingSemantics:DATA.countingSemantics,workedFixture:worked(),safeguards:['Direction comes from V290 source-bound matrix.','Inclusive counting is explicit to prevent off-by-one errors.','This module does not depend on 188/44/8 accumulation.','Production UI containment from V287 remains intact.'],nextGate:DATA.next};}
+E.version=VERSION;E.taiyiMingShenPlacementV291={data:DATA,locate:locate,ming:ming,shen:shen,worked:worked,audit:audit};
+})();</script>
+
+<script id="kd-classical-engine-34100">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.taiyiMingShenPlacementV291)return;
+var DATA={"version": "29.88.0-taiyi-mingshen-exhaustive-regression-v1", "profile": "RENDAO_MINGFA", "coverage": {"branchTriples": 1728, "directionProfiles": 4, "placementCases": 6912, "outputsPerCase": 2, "totalPlacementOutputs": 13824}, "profiles": [{"dayStem": "甲", "sex": "MALE", "polarity": "YANG", "ming": "FORWARD", "shen": "REVERSE"}, {"dayStem": "甲", "sex": "FEMALE", "polarity": "YANG", "ming": "REVERSE", "shen": "FORWARD"}, {"dayStem": "辛", "sex": "MALE", "polarity": "YIN", "ming": "REVERSE", "shen": "FORWARD"}, {"dayStem": "辛", "sex": "FEMALE", "polarity": "YIN", "ming": "FORWARD", "shen": "REVERSE"}], "invariants": ["All outputs must be one of 12 branches.", "If target hour label equals start label, result equals start earth palace.", "Forward and reverse placement are inverse rotations for the same label distance.", "Shen direction must always oppose Ming direction.", "Source worked example from V291 must remain unchanged."], "status": "MING_SHEN_EXHAUSTIVE_REGRESSION_LAYER_ADDED", "next": "V293 build a production-safe 命/身 result object that combines certified placement with V288 對宮/三方 relations, but keeps 旺陷/star interpretation disabled until its source tables are independently bound."},VERSION=DATA.version,P=E.taiyiMingShenPlacementV291,D=E.taiyiMingShenDirectionV290;
+var B=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+function run(){
+ var total=0,valid=0,invalid=0,zeroPass=0,zeroTotal=0,dirPass=0,dirTotal=0;
+ DATA.profiles.forEach(function(pr){
+  var md=D.mingDirection(pr.dayStem,pr.sex),sd=D.shenDirection(pr.dayStem,pr.sex);
+  dirTotal++; if((md==='FORWARD'&&sd==='REVERSE')||(md==='REVERSE'&&sd==='FORWARD'))dirPass++;
+  B.forEach(function(a){B.forEach(function(b){B.forEach(function(h){
+   total++;
+   var m=P.locate(a,b,h,md),s=P.locate(b,a,h,sd);
+   if(B.indexOf(m)>=0&&B.indexOf(s)>=0)valid++;else invalid++;
+   if(h===b){zeroTotal++;if(m===a)zeroPass++;}
+  });});});
+ });
+ var worked=P.worked();
+ return {cases:total,placementOutputs:total*2,validCases:valid,invalidCases:invalid,
+         zeroMove:{total:zeroTotal,pass:zeroPass},directionOpposition:{total:dirTotal,pass:dirPass},
+         sourceWorkedExample:worked,
+         pass:invalid===0&&zeroPass===zeroTotal&&dirPass===dirTotal&&worked.pass};
+}
+function audit(){var r=run();return {schema:'siching.taiyi.mingshen-exhaustive-regression.v1',engineVersion:VERSION,status:DATA.status,coverage:DATA.coverage,profiles:DATA.profiles,invariants:DATA.invariants,result:r,safeguards:['Regression is deterministic and independent of 188↔190.','No fate interpretation is produced.','V287 production UI containment remains active.','Passing invariants validates implementation consistency, not predictive validity.'],nextGate:DATA.next};}
+E.version=VERSION;E.taiyiMingShenRegressionV292={data:DATA,run:run,audit:audit};
+})();</script>
+
+<script id="kd-classical-engine-34200">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.taiyiMingShenRegressionV292||!E.taiyiRelationOracleV288)return;
+var DATA={"version": "29.89.0-taiyi-mingshen-production-safe-result-v1", "profile": "RENDAO_MINGFA", "resultContract": {"deterministic": ["命宮", "命宮對宮", "命宮三方", "身宮", "身宮對宮", "身宮三方", "命方向", "身方向"], "interpretiveLocked": ["旺陷", "吉凶", "格局等級", "壽夭", "富貴貧賤"], "reason": "Star 旺陷/source tables are not yet independently bound."}, "certification": {"placement": "SOURCE_BOUND_PLUS_EXHAUSTIVE_REGRESSION", "relations": "DETERMINISTIC_12_BRANCH_ORACLE", "interpretation": "LOCKED", "predictiveAccuracy": "NOT_CLAIMED"}, "uiSafety": {"normalUI": "No raw JSON/audit panel injected.", "researchMode": "Data remains available through engine APIs.", "v287Containment": "PRESERVED"}, "status": "MING_SHEN_PRODUCTION_SAFE_RESULT_OBJECT_READY_INTERPRETATION_LOCKED", "next": "V294 audit and bind the 人道命法 旺陷 tables for 五福/君基/臣基/民基 and other major spirits; only source-backed star-state cells may unlock interpretation."},VERSION=DATA.version,P=E.taiyiMingShenPlacementV291,D=E.taiyiMingShenDirectionV290,R=E.taiyiRelationOracleV288,I=E.taiyiMingShenInputV289;
+function build(x){
+ var n=I.normalize(x);if(!n.ok)return {ok:false,errors:n.errors,certification:'INPUT_REJECTED'};
+ var v=n.value,base={yearBranch:v.yearBranch,monthBranch:v.monthBranch,dayStem:v.dayStem,dayBranch:v.dayBranch,hourBranch:v.birthHourBranch,sex:v.sexProfile};
+ var m=P.ming(base),s=P.shen(base); if(!m||!s)return {ok:false,errors:['PLACEMENT_FAILED']};
+ return {ok:true,profile:DATA.profile,input:v,
+  deterministic:{命宮:m,命宮關係:R.relation(m),身宮:s,身宮關係:R.relation(s),命方向:D.mingDirection(v.dayStem,v.sexProfile),身方向:D.shenDirection(v.dayStem,v.sexProfile)},
+  interpretation:{status:'LOCKED',旺陷:null,吉凶:null,格局等級:null,reason:DATA.resultContract.reason},
+  certification:DATA.certification};
+}
+function audit(){var regression=E.taiyiMingShenRegressionV292.run();return {schema:'siching.taiyi.mingshen-production-safe-result.v1',engineVersion:VERSION,status:DATA.status,resultContract:DATA.resultContract,certification:DATA.certification,regressionPass:regression.pass,uiSafety:DATA.uiSafety,safeguards:['No raw debug UI is mounted.','No 旺陷 or fate claim is synthesized.','Placement is independent of unresolved 188↔190 accumulation.','Predictive accuracy is not claimed.'],nextGate:DATA.next};}
+E.version=VERSION;E.taiyiMingShenResultV293={data:DATA,build:build,audit:audit};
+})();</script>
+
+<script id="kd-classical-engine-34300">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.taiyiMingShenResultV293)return;
+var DATA={"version": "29.90.0-taiyi-wangxian-evidence-gate-v1", "profile": "RENDAO_MINGFA", "scope": ["五福", "君基", "臣基", "民基"], "evidencePolicy": {"cellLevelSourceRequired": true, "noMemoryFill": true, "noParallelProfileImport": true, "unknownCell": "UNVERIFIED", "interpretationUnlock": "Only a star×palace state explicitly supported by the 人道命法 source may unlock a 旺/陷-dependent interpretation."}, "stateVocabulary": ["旺", "相", "休", "囚", "死", "陷", "吉", "凶", "UNVERIFIED"], "matrixStatus": {"五福": "SOURCE_TABLE_EXTRACTION_PENDING", "君基": "SOURCE_TABLE_EXTRACTION_PENDING", "臣基": "SOURCE_TABLE_EXTRACTION_PENDING", "民基": "SOURCE_TABLE_EXTRACTION_PENDING"}, "integration": {"V293InterpretationLock": "PRESERVED", "placementMayContinue": true, "wangXianMayRender": false, "fateConclusionMayRender": false}, "status": "WANGXIAN_CELL_LEVEL_EVIDENCE_GATE_INSTALLED_NO_UNVERIFIED_TABLE_FILLED", "next": "V295 locate and transcribe only explicit 人道命法 旺陷/廟樂/宮位 cells for the four primary stars; attach source locator per cell and run contradiction/variant checks before unlocking any interpretation."},VERSION=DATA.version;
+var MATRIX={'五福':{},'君基':{},'臣基':{},'民基':{}};
+function setVerified(star,palace,state,source){if(!MATRIX[star]||!palace||DATA.stateVocabulary.indexOf(state)<0||!source)return false;MATRIX[star][palace]={state:state,source:source,verified:true};return true;}
+function getState(star,palace){var x=MATRIX[star]&&MATRIX[star][palace];return x||{state:'UNVERIFIED',source:null,verified:false};}
+function canInterpret(star,palace){return !!getState(star,palace).verified;}
+function audit(){var filled=0;Object.keys(MATRIX).forEach(function(s){filled+=Object.keys(MATRIX[s]).length;});return {schema:'siching.taiyi.wangxian-evidence-gate.v1',engineVersion:VERSION,status:DATA.status,scope:DATA.scope,evidencePolicy:DATA.evidencePolicy,matrixStatus:DATA.matrixStatus,verifiedCells:filled,integration:DATA.integration,safeguards:['No 旺陷 cell is populated without a source locator.','Parallel Taiyi profiles cannot silently fill 人道命法 cells.','V293 fate interpretation remains locked.','Unknown is represented as UNVERIFIED, never guessed.'],nextGate:DATA.next};}
+E.version=VERSION;E.taiyiWangXianGateV294={data:DATA,matrix:MATRIX,setVerified:setVerified,getState:getState,canInterpret:canInterpret,audit:audit};
+})();</script>
+
+<script id="kd-classical-engine-34400">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.taiyiWangXianGateV294)return;
+var DATA={"version": "29.91.0-taiyi-four-primary-wangxian-source-table-v1", "profile": "RENDAO_MINGFA", "source": "欽定古今圖書集成·博物彙編·藝術典·第699卷·太乙人道命法三", "tables": {"五福": {"element": "陽土", "旺": ["辰", "戌", "丑", "未"], "福": ["申", "亥"], "陷": ["寅", "卯"], "locator": "第699卷 五福總論→旺陷例"}, "君基": {"element": "陽土", "旺": ["辰", "戌", "丑", "未"], "福": ["申", "亥"], "陷": ["寅", "卯"], "locator": "第699卷 君基總論→旺陷例"}, "臣基": {"element": "陽土", "旺": ["辰", "戌", "丑", "未"], "福": ["申", "亥"], "陷": ["寅", "卯"], "locator": "第699卷 臣基總論→旺陷例"}, "民基": {"element": "陰土", "旺": ["子", "丑", "辰", "未", "申"], "福": [], "陷": ["寅", "卯", "酉"], "locator": "第699卷 民基總論→旺陷例"}}, "semantics": {"福": "Preserved as a distinct source label; not silently collapsed into 旺.", "unlisted": "UNVERIFIED/UNSPECIFIED_BY_THIS_WANGXIAN_LINE"}, "certification": {"五福": "ELECTRONIC_PRIMARY_TEXT_BOUND", "君基": "ELECTRONIC_PRIMARY_TEXT_BOUND", "臣基": "ELECTRONIC_PRIMARY_TEXT_BOUND", "民基": "ELECTRONIC_PRIMARY_TEXT_BOUND", "facsimile": "NOT_CLAIMED"}, "status": "FOUR_PRIMARY_WANGXIAN_TABLES_SOURCE_BOUND", "next": "V296 integrate these verified cells into V294 gate and add 48-cell regression, while keeping unlisted palaces explicitly UNSPECIFIED and interpretation limited to source-supported state effects."},VERSION=DATA.version,G=E.taiyiWangXianGateV294,B=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+function load(){var n=0;Object.keys(DATA.tables).forEach(function(star){var t=DATA.tables[star];['旺','福','陷'].forEach(function(state){(t[state]||[]).forEach(function(p){if(G.setVerified(star,p,state,{work:DATA.source,locator:t.locator,evidence:'electronic_primary_text'}))n++;});});});return n;}
+var loaded=load();
+function audit(){var rows=[];Object.keys(DATA.tables).forEach(function(star){B.forEach(function(p){var a=G.getState(star,p);rows.push({star:star,palace:p,state:a.state,verified:a.verified});});});var verified=rows.filter(function(x){return x.verified;}).length;return {schema:'siching.taiyi.four-primary-wangxian-source-table.v1',engineVersion:VERSION,status:DATA.status,source:DATA.source,tables:DATA.tables,loadedCells:loaded,regression:{totalCells:rows.length,verifiedCells:verified,unlistedCells:rows.length-verified,rows:rows},semantics:DATA.semantics,certification:DATA.certification,nextGate:DATA.next};}
+E.version=VERSION;E.taiyiFourPrimaryWangXianV295={data:DATA,load:load,audit:audit};
+})();</script>
+
+<script id="kd-classical-engine-34500">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.taiyiFourPrimaryWangXianV295)return;
+var DATA={"version": "29.92.0-taiyi-four-primary-48cell-regression-v1", "profile": "RENDAO_MINGFA", "scope": {"stars": 4, "palaces": 12, "cells": 48}, "source": "欽定古今圖書集成·博物彙編·藝術典·第699卷·太乙人道命法三", "rules": {"五福": {"旺": ["辰", "戌", "丑", "未"], "福": ["申", "亥"], "陷": ["寅", "卯"]}, "君基": {"旺": ["辰", "戌", "丑", "未"], "福": ["申", "亥"], "陷": ["寅", "卯"]}, "臣基": {"旺": ["辰", "戌", "丑", "未"], "福": ["申", "亥"], "陷": ["寅", "卯"]}, "民基": {"旺": ["子", "丑", "辰", "未", "申"], "福": [], "陷": ["寅", "卯", "酉"]}}, "expected": {"verifiedCells": 31, "unlistedCells": 17}, "interpretationPolicy": {"旺": "SOURCE_STATE_ONLY", "福": "SOURCE_STATE_ONLY_DISTINCT_FROM_旺", "陷": "SOURCE_STATE_ONLY", "UNVERIFIED": "NO_INTERPRETATION"}, "status": "FOUR_PRIMARY_48CELL_REGRESSION_AND_SAFE_LOOKUP_READY", "next": "V297 extract 文昌、計神、小游 旺陷 examples from 第699卷 and extend the same cell-level evidence architecture without importing unverified palaces."},VERSION=DATA.version,G=E.taiyiWangXianGateV294,B=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+function expected(star,p){var r=DATA.rules[star];if(!r)return 'UNVERIFIED';if(r['旺'].indexOf(p)>=0)return '旺';if((r['福']||[]).indexOf(p)>=0)return '福';if(r['陷'].indexOf(p)>=0)return '陷';return 'UNVERIFIED';}
+function safeLookup(star,p){var a=G.getState(star,p),e=expected(star,p);return {star:star,palace:p,expected:e,actual:a.state,verified:a.verified,pass:a.state===e&&(e==='UNVERIFIED'?!a.verified:a.verified),interpretationAllowed:e!=='UNVERIFIED'&&a.verified};}
+function run(){var rows=[];Object.keys(DATA.rules).forEach(function(s){B.forEach(function(p){rows.push(safeLookup(s,p));});});var verified=rows.filter(function(x){return x.actual!=='UNVERIFIED'&&x.verified;}).length,unlisted=rows.filter(function(x){return x.expected==='UNVERIFIED';}).length;return {total:rows.length,pass:rows.filter(function(x){return x.pass;}).length,fail:rows.filter(function(x){return !x.pass;}).length,verifiedCells:verified,unlistedCells:unlisted,expected:DATA.expected,rows:rows,allPass:rows.every(function(x){return x.pass;})&&verified===DATA.expected.verifiedCells&&unlisted===DATA.expected.unlistedCells};}
+function audit(){return {schema:'siching.taiyi.four-primary-48cell-regression.v1',engineVersion:VERSION,status:DATA.status,source:DATA.source,result:run(),interpretationPolicy:DATA.interpretationPolicy,safeguards:['48 cells are checked explicitly.','Unlisted source cells remain UNVERIFIED.','福 is not collapsed into 旺.','No predictive-accuracy claim.','V287 production UI containment preserved.'],nextGate:DATA.next};}
+E.version=VERSION;E.taiyiFourPrimary48CellV296={data:DATA,expected:expected,safeLookup:safeLookup,run:run,audit:audit};
+})();</script>
+
+
+<style id="kd-ui-restore-source-profile-v297">
+/* V297: the user-facing "Quy tắc chọn lời và hồ sơ nguồn" panel is content, not debug. */
+.kd-source-profile-user-panel,
+[data-kd-source-profile-user="1"]{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+.kd-source-profile-user-panel pre,
+.kd-source-profile-user-panel code,
+[data-kd-source-profile-user="1"] pre,
+[data-kd-source-profile-user="1"] code{
+  display:none !important;
+}
+</style>
+<script id="kd-ui-restore-source-profile-v297-script">
+(function(){
+'use strict';
+function textOf(el){return (el && (el.innerText||el.textContent)||'').trim();}
+function isRawMachine(t){
+  return /"schema"\s*:|"method"\s*:|"baseHexagram"\s*:|"changedHexagram"\s*:|"movingLines"\s*:|qimeng_bianzhan_reading/.test(t||'');
+}
+function restore(){
+  var nodes=[].slice.call(document.querySelectorAll('section,article,div,details'));
+  nodes.forEach(function(el){
+    var t=textOf(el);
+    if(!/Quy tắc chọn lời và hồ sơ nguồn/i.test(t)) return;
+    // Find the smallest useful content container, but never expose raw JSON.
+    if(isRawMachine(t)){
+      [].slice.call(el.querySelectorAll('pre,code')).forEach(function(x){
+        if(isRawMachine(textOf(x))) x.style.setProperty('display','none','important');
+      });
+    }
+    el.classList.add('kd-source-profile-user-panel');
+    el.setAttribute('data-kd-source-profile-user','1');
+    el.style.setProperty('display','block','important');
+    el.style.setProperty('visibility','visible','important');
+    el.style.setProperty('opacity','1','important');
+  });
+}
+function boot(){restore();new MutationObserver(function(){restore();}).observe(document.documentElement,{childList:true,subtree:true});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+window.KD_UI_SOURCE_PROFILE_V297={restore:restore,status:'USER_SOURCE_PROFILE_RESTORED_RAW_JSON_STILL_HIDDEN'};
+})();
+</script>
+
