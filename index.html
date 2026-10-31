@@ -14973,3 +14973,95 @@ function audit(){return {schema:'siching.taiyi.rendao-secondary-position-module.
 E.version=VERSION;E.taiyiRenDaoSecondaryPositionsV285={data:DATA,calculate:calculate,fixture:fixture,audit:audit};
 function mount(){var root=document.getElementById('kd-engine-33300-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-33400-ui'))return;var d=document.createElement('div');d.id='kd-engine-33400-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>🧭 V285 · 人道命法 Secondary Position Module</b></summary><p>Module riêng đã được thêm cho 五福、君基、臣基、民基. Nó chỉ nhận 天/地/人數 do caller cung cấp, không gọi và không sửa accumulation đang mismatch. Fixture nguồn 188/44/8 kiểm độc lập bốn vị trí.</p><button class="btn" id="v285a">Audit module</button><p id="v285s"></p><pre id="v285o" style="white-space:pre-wrap;max-height:18000px;overflow:auto"></pre></details>';root.appendChild(d);var o=d.querySelector('#v285o'),s=d.querySelector('#v285s');d.querySelector('#v285a').onclick=function(){var r=audit();o.textContent=JSON.stringify(r,null,2);s.textContent=r.status+' · worked fixture '+(r.workedFixture.pass?'PASS':'FAIL');};}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();</script>
+
+<script id="kd-classical-engine-33500">
+(function(){'use strict';var E=window.KD_CLASSICAL_ENGINE;if(!E||!E.taiyiRenDaoSecondaryPositionsV285)return;
+var DATA={"version": "29.82.0-taiyi-ming-shen-sanyuan-relation-foundation-v1", "profile": "RENDAO_MINGFA", "sourceRules": {"天盤": "生月支加生時支，逆行布十二支；不分男女陰陽。", "命宮": "生年支加生月支，依生日干支陰陽及性別定順逆，數至生時。", "身宮": "生月支加生日支；命順則身逆，命逆則身順，數至生時。", "論命": "以命宮為主，察守命之星旺陷；再看對照及三方；再看身元；更看時元。", "priority": "先五福，次君基，次臣基，次民基；另有異說須保留，不合併為唯一標準。"}, "relationPolicy": {"命宮": "PRIMARY", "對照": "OPPOSITE_RELATION_REQUIRED", "三方": "TRINE_RELATIONS_REQUIRED", "身元": "HIGH_WEIGHT_SOURCE_RULE", "時元": "LATE_LIFE_DESCENDANT_SYMBOLISM_SOURCE_RULE", "旺陷": "REQUIRED_BEFORE_INTERPRETATION", "noDeterministicFateClaim": true}, "interpretiveMatrix": [["命星旺/吉", "對照三方吉", "SOURCE_CLASS=上格"], ["命星陷", "對照三方吉", "SOURCE_CLASS=好格"], ["命星吉", "對照三方凶", "SOURCE_CLASS=常命"], ["命星陷", "對照三方凶", "SOURCE_CLASS=下等"]], "implementation": {"deterministicPlacement": "SKELETON_ONLY_UNTIL_GANZHI_GENDER_INPUT_NORMALIZATION_IS_BOUND", "relationEngine": "READY_FOR_12_BRANCH_OPPOSITE_TRINE", "interpretation": "EVIDENCE_LABELS_ONLY", "upstream188190": "UNCHANGED"}, "status": "MING_SHEN_OPPOSITE_TRINE_EVIDENCE_FOUNDATION_BUILT", "next": "V287 implement exact 12-branch 對宮/三合 relation oracle and normalize 命宮/身宮 inputs; do not implement gender/day-polarity direction until the source wording is encoded and independently fixture-tested."},VERSION=DATA.version;
+var B=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+function opposite(b){var i=B.indexOf(b);return i<0?null:B[(i+6)%12];}
+var TRI={'申':['子','辰'],'子':['申','辰'],'辰':['申','子'],'亥':['卯','未'],'卯':['亥','未'],'未':['亥','卯'],'寅':['午','戌'],'午':['寅','戌'],'戌':['寅','午'],'巳':['酉','丑'],'酉':['巳','丑'],'丑':['巳','酉']};
+function relations(branch){return {命宮:branch,對宮:opposite(branch),三方:(TRI[branch]||[]).slice()};}
+function audit(){var rel={};B.forEach(function(b){rel[b]=relations(b);});return {schema:'siching.taiyi.ming-shen-sanyuan-relation-foundation.v1',engineVersion:VERSION,status:DATA.status,sourceRules:DATA.sourceRules,relationPolicy:DATA.relationPolicy,interpretiveMatrix:DATA.interpretiveMatrix,relations12:rel,implementation:DATA.implementation,safeguards:['Source interpretive hierarchy is stored as evidence labels, not predictive fact.','異說 about 五福/臣基 priority is preserved rather than silently reconciled.','命宮/身宮 deterministic placement is not claimed complete yet.','188↔190 remains untouched.'],nextGate:DATA.next};}
+E.version=VERSION;E.taiyiMingShenRelationsV286={data:DATA,opposite:opposite,relations:relations,audit:audit};
+function mount(){var root=document.getElementById('kd-engine-33400-ui')||document.getElementById('kd-engine-5000-ui');if(!root||document.getElementById('kd-engine-33500-ui'))return;var d=document.createElement('div');d.id='kd-engine-33500-ui';d.style.marginTop='12px';d.innerHTML='<details open><summary><b>🧩 V286 · 命宮 / 身元 / 對照三方 Foundation</b></summary><p>Đã đưa đúng thứ tự luận của 第698卷 vào evidence engine: 命宮 → 對照/三方 → 身元 → 時元, đồng thời giữ 旺陷 là điều kiện bắt buộc trước luận. Quan hệ 對宮/三合 12 chi được tách thành oracle hình học; phần an 命/身 chưa tuyên bố hoàn chỉnh cho đến khi direction rule được fixture-test.</p><button class="btn" id="v286a">Audit relation foundation</button><p id="v286s"></p><pre id="v286o" style="white-space:pre-wrap;max-height:18000px;overflow:auto"></pre></details>';root.appendChild(d);var o=d.querySelector('#v286o'),s=d.querySelector('#v286s');d.querySelector('#v286a').onclick=function(){var r=audit();o.textContent=JSON.stringify(r,null,2);s.textContent=r.status;};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();})();</script>
+
+
+<style id="kd-production-ui-containment-v287">
+/* Production mode: research/audit panels must never spill into the reading screen. */
+html:not(.kd-research-mode) [id^="kd-engine-"][id$="-ui"],
+html:not(.kd-research-mode) .kd-audit-panel,
+html:not(.kd-research-mode) .kd-debug-panel,
+html:not(.kd-research-mode) [data-kd-debug],
+html:not(.kd-research-mode) [data-kd-audit]{
+  display:none !important;
+}
+/* Raw machine payloads are research-only. */
+html:not(.kd-research-mode) pre[data-kd-json],
+html:not(.kd-research-mode) code[data-kd-json]{
+  display:none !important;
+}
+</style>
+<script id="kd-production-ui-containment-33600">
+(function(){
+'use strict';
+var VERSION='29.83.0-production-ui-debug-containment-v1';
+var ROOT=document.documentElement;
+function textOf(el){return (el&&el.textContent||'').replace(/\s+/g,' ').trim();}
+function hideRawDebug(){
+  document.querySelectorAll('pre,code').forEach(function(el){
+    var t=textOf(el);
+    if(!t) return;
+    var machine =
+      (t.indexOf('"schema"')>=0 && t.indexOf('"method"')>=0) ||
+      (t.indexOf('"baseHexagram"')>=0 && t.indexOf('"movingLines"')>=0) ||
+      (t.indexOf('"changedHexagram"')>=0 && t.indexOf('"unchangedLines"')>=0);
+    if(machine){
+      el.setAttribute('data-kd-json','1');
+      var p=el.parentElement;
+      if(p && /^(DETAILS|SECTION|DIV)$/i.test(p.tagName)){
+        var pt=textOf(p);
+        if(pt.indexOf('Quy tắc chọn lời và hồ sơ nguồn')>=0 ||
+           pt.indexOf('qimeng_bianzhan_reading')>=0){
+          p.style.display='none';
+          p.setAttribute('data-kd-debug','1');
+        }
+      }
+    }
+  });
+}
+function hideHeaderSubtitle(){
+  var els=document.querySelectorAll('header *, .header *, [class*="hero"] *, [class*="brand"] *');
+  els.forEach(function(el){
+    var t=textOf(el);
+    if(t==='Gieo quẻ Kinh Dịch' || t==='Gieo quẻ Kinh Dich'){
+      el.style.display='none';
+      el.setAttribute('data-kd-removed-subtitle','1');
+    }
+  });
+}
+function clean(){
+  if(ROOT.classList.contains('kd-research-mode')) return;
+  hideRawDebug();
+  hideHeaderSubtitle();
+}
+function enableResearchMode(){
+  ROOT.classList.add('kd-research-mode');
+  document.querySelectorAll('[data-kd-debug]').forEach(function(el){el.style.display='';});
+}
+function disableResearchMode(){
+  ROOT.classList.remove('kd-research-mode'); clean();
+}
+window.KD_UI_CONTAINMENT_V287={
+  version:VERSION,
+  clean:clean,
+  enableResearchMode:enableResearchMode,
+  disableResearchMode:disableResearchMode
+};
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',clean,{once:true});
+else clean();
+var obs=new MutationObserver(function(){clean();});
+if(document.documentElement) obs.observe(document.documentElement,{subtree:true,childList:true});
+})();
+</script>
+
