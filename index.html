@@ -15186,3 +15186,75 @@ document.addEventListener('click',function(e){
 window.addEventListener('popstate',function(){var h=(location.hash||'').slice(1);if(h&&h!=='scr-cast')forceScreen(h)},true);
 window.KD_CAST_STATE_RESET_V337={version:'4.11-v337',clear:clearCastOwnership,forceScreen:forceScreen,status:'CAST_RESULT_ROUTING_STATE_RESET_ON_HOME_AND_DISCIPLINE_NAV'};
 })();</script>
+
+<style id="kd-hard-cast-isolation-style-v338">
+/* Outside Kinh Dịch casting, the entire casting screen is physically removed
+   from layout so it cannot sit above/before the selected discipline. */
+html[data-kd-v338-screen]:not([data-kd-v338-screen="scr-cast"]) #scr-cast{
+ display:none!important; visibility:hidden!important; pointer-events:none!important;
+ position:absolute!important; left:-100000px!important; top:-100000px!important;
+ width:0!important; height:0!important; max-height:0!important; overflow:hidden!important;
+}
+</style>
+<script id="kd-hard-cast-isolation-v338">
+(function(){'use strict';
+var current='scr-home', seq=0;
+function screenExists(id){var e=document.getElementById(id);return !!(e&&e.classList.contains('screen'))}
+function mark(id){
+ current=id; document.documentElement.setAttribute('data-kd-v338-screen',id);
+ var app=document.getElementById('app');if(app)app.setAttribute('data-kd-v338-screen',id);
+}
+function hardSwitch(id){
+ if(!screenExists(id))return false;
+ seq++; mark(id);
+ var cast=document.getElementById('scr-cast');
+ if(cast && id!=='scr-cast'){
+   cast.classList.remove('active','show','visible','on');
+   cast.setAttribute('hidden',''); cast.setAttribute('aria-hidden','true');
+   cast.style.setProperty('display','none','important');
+ }
+ document.querySelectorAll('.screen').forEach(function(x){
+   var on=x.id===id;
+   x.classList.toggle('active',on);x.classList.toggle('show',on);x.classList.toggle('visible',on);
+   if(on){
+     x.removeAttribute('hidden');x.setAttribute('aria-hidden','false');
+     x.style.removeProperty('display');x.style.removeProperty('visibility');
+   }else{
+     x.setAttribute('aria-hidden','true');
+   }
+ });
+ document.querySelectorAll('#tabs [data-s]').forEach(function(x){
+   var on=x.getAttribute('data-s')===id;x.classList.toggle('on',on);x.classList.toggle('active',on);
+ });
+ var app=document.getElementById('app');if(app)app.setAttribute('data-kd359-screen',id);
+ return true;
+}
+function navId(el){
+ if(!el||!el.closest)return '';
+ var n=el.closest('[data-s],[data-kd351-target],[data-kd359-target],a[href^="#scr-"]');
+ if(!n)return '';
+ return n.getAttribute('data-s')||n.getAttribute('data-kd351-target')||n.getAttribute('data-kd359-target')||(n.getAttribute('href')||'').replace(/^#/,'');
+}
+document.addEventListener('click',function(e){
+ var id=navId(e.target);if(!id||id.indexOf('scr-')!==0)return;
+ /* Capture navigation before legacy result handlers can redirect to scr-cast. */
+ if(id!=='scr-cast'){
+   mark(id);
+   [0,1,10,30,80,160,320,650,1200,2200,4000].forEach(function(ms){
+     setTimeout(function(){if(current===id)hardSwitch(id)},ms);
+   });
+ }else{current='scr-cast';mark(current)}
+},true);
+
+/* Persistent guard: once another discipline/home owns the screen, any legacy
+   attempt to reactivate scr-cast is immediately undone. */
+new MutationObserver(function(){
+ if(current==='scr-cast'||!screenExists(current))return;
+ var cast=document.getElementById('scr-cast');
+ var active=document.querySelector('.screen.active');
+ if((cast&&cast.classList.contains('active')) || !active || active.id!==current) hardSwitch(current);
+}).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class','hidden','style']});
+
+mark(document.querySelector('.screen.active')?.id||'scr-home');
+window.KD_HARD_CAST_ISOLATION_V338={version:'4.11-v338',switchTo:hardSwitch,getCurrent:function(){return current},status:'CAST_SCREEN_HARD_HIDDEN_OUTSIDE_CAST'};
+})();</script>
